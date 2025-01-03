@@ -22,10 +22,8 @@
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <li><a class="dropdown-item" href="#">Settings</a></li>
-                    <li><a class="dropdown-item" href="#">Activity Log</a></li>
                     <li><hr class="dropdown-divider" /></li>
-                    <li><a class="dropdown-item" href="#">Logout</a></li>
+                    <li><a class="dropdown-item" href="logout">Logout</a></li>
                 </ul>
             </li>
         </ul>
@@ -35,19 +33,24 @@
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
-                        <div class="sb-sidenav-menu-heading">Core</div>
+                        <div class="sb-sidenav-menu-heading">Menu Admin</div>
                         <a class="nav-link" href="#">
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                             Dashboard
                         </a>
-                        <a class="nav-link" href="#">
+                        
+                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseProduk" aria-expanded="false" aria-controls="collapseProduk">
                             <div class="sb-nav-link-icon"><i class="fas fa-box"></i></div>
-                            Daftar Produk
+                            Produk
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
-                        <a class="nav-link" href="#">
-                            <div class="sb-nav-link-icon"><i class="fas fa-tags"></i></div>
-                            Kategori Produk
-                        </a>
+                        <div class="collapse" id="collapseProduk" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" href="manageproducts">Daftar Produk</a>
+                                <a class="nav-link" href="manageCategories">Kategori Produk</a>
+                            </nav>
+                        </div>
+
                         <a class="nav-link" href="#">
                             <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
                             Tampilan Depan
@@ -62,31 +65,108 @@
         </div>
         <div id="layoutSidenav_content">
             <main>
-                <div class="container-fluid px-4">
-                    <h1 class="mt-4">Daftar Produk</h1>
-                    <ol class="breadcrumb mb-4">
-                        <li class="breadcrumb-item">Dashboard</li>
-                        <li class="breadcrumb-item active">Daftar Produk</li>
-                    </ol>
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <i class="fas fa-table me-1"></i>
-                            Daftar Produk
-                        </div>
-                        <div class="card-body">
-                            <button class="btn btn-primary mb-3">+ Tambah</button>
-                            <table id="datatablesSimple" class="table table-bordered">
-                                <thead>
-                            
-                                            <button class="btn btn-success btn-sm">Ubah</button>
-                                            <button class="btn btn-danger btn-sm">Hapus</button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+            <div class="container-fluid px-4">
+    <h1 class="mt-4">Dashboard Penjualan Genatan Kaos</h1>
+
+    <!-- Stats Overview -->
+    <div class="row">
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body">
+                    <h5>Total Produk</h5>
+                    <h3>120</h3>
                 </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a href="/admin/products" class="text-white small stretched-link">Lihat Detail</a>
+                    <div class="text-white"><i class="fas fa-box-open"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body">
+                    <h5>Penjualan Bulan Ini</h5>
+                    <h3>75</h3>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a href="/admin/transactions" class="text-white small stretched-link">Lihat Detail</a>
+                    <div class="text-white"><i class="fas fa-chart-line"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card bg-warning text-white h-100">
+                <div class="card-body">
+                    <h5>Stok Habis</h5>
+                    <h3>5</h3>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a href="/admin/products" class="text-white small stretched-link">Lihat Detail</a>
+                    <div class="text-white"><i class="fas fa-exclamation-triangle"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card bg-danger text-white h-100">
+                <div class="card-body">
+                    <h5>Pengguna Terblokir</h5>
+                    <h3>10</h3>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a href="/admin/users" class="text-white small stretched-link">Lihat Detail</a>
+                    <div class="text-white"><i class="fas fa-user-slash"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table for Product List -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5><i class="fas fa-tshirt"></i> Daftar Produk</h5>
+            <button class="btn btn-primary" onclick="window.location.href='/admin/product/add'">+ Tambah Produk</button>
+        </div>
+        <div class="card-body">
+            <table id="datatablesSimple" class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Nama Produk</th>
+                        <th>Harga</th>
+                        <th>Stok</th>
+                        <th>Kategori</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Kaos Polos Hitam</td>
+                        <td>Rp 50.000</td>
+                        <td>20</td>
+                        <td>Polos</td>
+                        <td>
+                            <button class="btn btn-success btn-sm" onclick="window.location.href='/admin/product/edit/1'">Ubah</button>
+                            <button class="btn btn-danger btn-sm" onclick="confirm('Hapus produk ini?') && window.location.href='/admin/product/delete/1'">Hapus</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Kaos Polos Putih</td>
+                        <td>Rp 50.000</td>
+                        <td>10</td>
+                        <td>Polos</td>
+                        <td>
+                            <button class="btn btn-success btn-sm" onclick="window.location.href='/admin/product/edit/2'">Ubah</button>
+                            <button class="btn btn-danger btn-sm" onclick="confirm('Hapus produk ini?') && window.location.href='/admin/product/delete/2'">Hapus</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
             </main>
             <footer class="py-4 bg-light mt-auto">
                 <div class="container-fluid px-4">

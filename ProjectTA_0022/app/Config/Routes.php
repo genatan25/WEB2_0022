@@ -2,37 +2,35 @@
 
 namespace Config;
 
+use CodeIgniter\Config\Services;
+
 $routes = Services::routes();
 
-// Default Route
-$routes->get('/', 'Auth::login');
+if (file_exists(SYSTEMPATH . 'Config/Routes.php')) {
+    require SYSTEMPATH . 'Config/Routes.php';
+}
 
-// Authentication Routes
-$routes->get('/login', 'Auth::login');
-$routes->post('/auth/authenticate', 'Auth::authenticate');
-$routes->get('/register', 'Auth::register');
-$routes->post('/auth/create', 'Auth::create');
-$routes->get('/logout', 'Auth::logout');
+$routes->setDefaultNamespace('App\Controllers');
+$routes->setDefaultController('AuthAdmin');
+$routes->setDefaultMethod('login');
+$routes->setTranslateURIDashes(false);
+$routes->set404Override();
+$routes->setAutoRoute(true);
+
+// Admin Authentication Routes
+$routes->get('/admin/login', 'AuthAdmin::login');
+$routes->post('/admin/login', 'AuthAdmin::doLogin');
+$routes->get('/admin/register_admin', 'AuthAdmin::register_admin');
+$routes->post('/admin/register_admin', 'AuthAdmin::doRegister_admin'); // Disesuaikan dengan nama method
+$routes->get('/admin/logout', 'AuthAdmin::logout');
 
 // Admin Routes
-$routes->get('/admin/dashboard', 'Admin::dashboard', ['filter' => 'authGuardAdmin']);
-$routes->get('/admin/manage-products', 'Admin::manageProducts', ['filter' => 'authGuardAdmin']);
-$routes->get('/admin/add-product', 'Admin::addProduct', ['filter' => 'authGuardAdmin']);
-$routes->post('/admin/store-product', 'Admin::storeProduct', ['filter' => 'authGuardAdmin']);
-$routes->get('/admin/edit-product/(:num)', 'Admin::editProduct/$1', ['filter' => 'authGuardAdmin']);
-$routes->post('/admin/update-product/(:num)', 'Admin::updateProduct/$1', ['filter' => 'authGuardAdmin']);
-$routes->get('/admin/delete-product/(:num)', 'Admin::deleteProduct/$1', ['filter' => 'authGuardAdmin']);
+$routes->get('/admin', 'Admin::dashboard');
+$routes->get('/admin/manage-products', 'Admin::manageProducts');
+$routes->post('/admin/product/add', 'Admin::addProduct');
+$routes->post('/admin/product/edit', 'Admin::editProduct');
+$routes->post('/admin/product/delete', 'Admin::deleteProduct');
 
-// User Routes
-$routes->get('/user/home', 'User::home', ['filter' => 'authGuardUser']);
-$routes->get('/user/products', 'User::productList', ['filter' => 'authGuardUser']);
-
-// Cart Routes
-$routes->get('/cart', 'Cart::viewCart', ['filter' => 'authGuardUser']);
-$routes->post('/cart/add', 'Cart::addToCart', ['filter' => 'authGuardUser']);
-$routes->post('/checkout', 'Cart::checkout', ['filter' => 'authGuardUser']);
-
-// Error Pages
-$routes->set404Override(function () {
-    echo view('error/404');
-});
+if (file_exists(APPPATH . 'Config/' . ENVIRONMENT . '/Routes.php')) {
+    require APPPATH . 'Config/' . ENVIRONMENT . '/Routes.php';
+}

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
@@ -10,13 +11,15 @@ class CreateGenatanKaosTables extends Migration
         // Tabel user
         $this->forge->addField([
             'id_user'       => ['type' => 'INT', 'auto_increment' => true],
-            'username'      => ['type' => 'VARCHAR', 'constraint' => '50'],
-            'password'      => ['type' => 'VARCHAR', 'constraint' => '255'],
-            'email'         => ['type' => 'VARCHAR', 'constraint' => '100'],
-            'nama_lengkap'  => ['type' => 'VARCHAR', 'constraint' => '100'],
+            'username'      => ['type' => 'VARCHAR', 'constraint' => 50],
+            'password'      => ['type' => 'VARCHAR', 'constraint' => 255],
+            'email'         => ['type' => 'VARCHAR', 'constraint' => 100],
+            'nama_lengkap'  => ['type' => 'VARCHAR', 'constraint' => 100],
             'alamat'        => ['type' => 'TEXT'],
-            'telepon'       => ['type' => 'VARCHAR', 'constraint' => '15'],
+            'telepon'       => ['type' => 'VARCHAR', 'constraint' => 15],
+            'profile_color' => ['type' => 'VARCHAR', 'constraint' => 7], // Field tambahan untuk warna profil
             'created_at'    => ['type' => 'TIMESTAMP', 'null' => true],
+            'updated_at'    => ['type' => 'TIMESTAMP', 'null' => true],
         ]);
         $this->forge->addKey('id_user', true);
         $this->forge->createTable('user');
@@ -24,9 +27,12 @@ class CreateGenatanKaosTables extends Migration
         // Tabel admin
         $this->forge->addField([
             'id_admin'      => ['type' => 'INT', 'auto_increment' => true],
-            'username'      => ['type' => 'VARCHAR', 'constraint' => '50'],
-            'password'      => ['type' => 'VARCHAR', 'constraint' => '255'],
-            'nama_lengkap'  => ['type' => 'VARCHAR', 'constraint' => '100'],
+            'username'      => ['type' => 'VARCHAR', 'constraint' => 50],
+            'password'      => ['type' => 'VARCHAR', 'constraint' => 255],
+            'nama_lengkap'  => ['type' => 'VARCHAR', 'constraint' => 100],
+            'profile_color' => ['type' => 'VARCHAR', 'constraint' => 7], // Field tambahan untuk warna profil
+            'created_at'    => ['type' => 'TIMESTAMP', 'null' => true],
+            'updated_at'    => ['type' => 'TIMESTAMP', 'null' => true],
         ]);
         $this->forge->addKey('id_admin', true);
         $this->forge->createTable('admin');
@@ -34,7 +40,9 @@ class CreateGenatanKaosTables extends Migration
         // Tabel kategori
         $this->forge->addField([
             'id_kategori'   => ['type' => 'INT', 'auto_increment' => true],
-            'nama_kategori' => ['type' => 'VARCHAR', 'constraint' => '50'],
+            'nama_kategori' => ['type' => 'VARCHAR', 'constraint' => 50],
+            'created_at'    => ['type' => 'TIMESTAMP', 'null' => true],
+            'updated_at'    => ['type' => 'TIMESTAMP', 'null' => true],
         ]);
         $this->forge->addKey('id_kategori', true);
         $this->forge->createTable('kategori');
@@ -42,10 +50,10 @@ class CreateGenatanKaosTables extends Migration
         // Tabel produk
         $this->forge->addField([
             'id_produk'     => ['type' => 'INT', 'auto_increment' => true],
-            'nama_produk'   => ['type' => 'VARCHAR', 'constraint' => '100'],
+            'nama_produk'   => ['type' => 'VARCHAR', 'constraint' => 100],
             'deskripsi'     => ['type' => 'TEXT'],
             'harga'         => ['type' => 'DECIMAL', 'constraint' => '12,2'],
-            'gambar'        => ['type' => 'VARCHAR', 'constraint' => '255'],
+            'gambar'        => ['type' => 'VARCHAR', 'constraint' => 255],
             'id_kategori'   => ['type' => 'INT'],
             'stok'          => ['type' => 'INT'],
             'created_at'    => ['type' => 'TIMESTAMP', 'null' => true],
@@ -62,6 +70,7 @@ class CreateGenatanKaosTables extends Migration
             'total_harga'   => ['type' => 'DECIMAL', 'constraint' => '12,2'],
             'status'        => ['type' => 'ENUM', 'constraint' => ['pending', 'paid', 'shipped', 'completed', 'canceled']],
             'created_at'    => ['type' => 'TIMESTAMP', 'null' => true],
+            'updated_at'    => ['type' => 'TIMESTAMP', 'null' => true],
         ]);
         $this->forge->addKey('id_transaksi', true);
         $this->forge->addForeignKey('id_user', 'user', 'id_user', 'CASCADE', 'CASCADE');
@@ -87,6 +96,8 @@ class CreateGenatanKaosTables extends Migration
             'id_produk'     => ['type' => 'INT'],
             'jumlah'        => ['type' => 'INT'],
             'subtotal'      => ['type' => 'DECIMAL', 'constraint' => '12,2'],
+            'created_at'    => ['type' => 'TIMESTAMP', 'null' => true],
+            'updated_at'    => ['type' => 'TIMESTAMP', 'null' => true],
         ]);
         $this->forge->addKey('id_cart', true);
         $this->forge->addForeignKey('id_user', 'user', 'id_user', 'CASCADE', 'CASCADE');
@@ -99,6 +110,7 @@ class CreateGenatanKaosTables extends Migration
             'id_user'       => ['type' => 'INT'],
             'isi_testimoni' => ['type' => 'TEXT'],
             'created_at'    => ['type' => 'TIMESTAMP', 'null' => true],
+            'updated_at'    => ['type' => 'TIMESTAMP', 'null' => true],
         ]);
         $this->forge->addKey('id_testimoni', true);
         $this->forge->addForeignKey('id_user', 'user', 'id_user', 'CASCADE', 'CASCADE');
@@ -107,13 +119,13 @@ class CreateGenatanKaosTables extends Migration
 
     public function down()
     {
-        $this->forge->dropTable('testimoni');
-        $this->forge->dropTable('cart');
-        $this->forge->dropTable('detail_transaksi');
-        $this->forge->dropTable('transaksi');
-        $this->forge->dropTable('produk');
-        $this->forge->dropTable('kategori');
-        $this->forge->dropTable('admin');
-        $this->forge->dropTable('user');
+        $this->forge->dropTable('testimoni', true);
+        $this->forge->dropTable('cart', true);
+        $this->forge->dropTable('detail_transaksi', true);
+        $this->forge->dropTable('transaksi', true);
+        $this->forge->dropTable('produk', true);
+        $this->forge->dropTable('kategori', true);
+        $this->forge->dropTable('admin', true);
+        $this->forge->dropTable('user', true);
     }
 }

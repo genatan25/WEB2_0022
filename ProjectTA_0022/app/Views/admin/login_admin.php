@@ -186,8 +186,8 @@
                 <a href="#">Hubungi kami</a>
             </nav>
             <div class="login-section">
-                <a href="/auth/login">
-                    <span>👤</span> Login
+                <a href="/admin/register_admin">
+                    <span>👤</span> Register
                 </a>
                 <a href="#" class="login-button">Mulai Belanja</a>
             </div>
@@ -195,7 +195,7 @@
 
         <div class="banner"></div>
 
-        <form class="login-form" action="/auth/authenticate" method="post">
+        <form class="login-form" action="/admin/dashboard" method="post">
             <?= csrf_field() ?>
             <div class="form-group">
                 <label class="form-label">Username</label>

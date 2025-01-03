@@ -1,10 +1,11 @@
+<!-- File: app/Views/admin/register_admin.php -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Register - Admin Panel</title>
+    <title>Register Admin - Admin Panel</title>
     <link href="<?= base_url('template/css/styles.css') ?>" rel="stylesheet">
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 </head>
@@ -17,7 +18,7 @@
                         <div class="col-lg-7">
                             <div class="card shadow-lg border-0 rounded-lg mt-5">
                                 <div class="card-header">
-                                    <h3 class="text-center font-weight-light my-4">Register</h3>
+                                    <h3 class="text-center font-weight-light my-4">Register Admin</h3>
                                 </div>
                                 <div class="card-body">
                                     <!-- Flash Messages -->
@@ -28,7 +29,7 @@
                                     <?php endif; ?>
 
                                     <!-- Registration Form -->
-                                    <form action="<?= base_url('auth/doRegister') ?>" method="post">
+                                    <form action="<?= base_url('admin/register_admin') ?>" method="post">
                                         <?= csrf_field() ?>
 
                                         <!-- Username -->
@@ -39,30 +40,11 @@
                                                    name="username"
                                                    placeholder="Username"
                                                    value="<?= old('username') ?>"
-                                                   aria-label="Username"
                                                    required />
                                             <label for="inputUsername">Username</label>
                                             <?php if (session('errors.username')) : ?>
                                                 <div class="invalid-feedback">
                                                     <?= session('errors.username') ?>
-                                                </div>
-                                            <?php endif; ?>
-                                        </div>
-
-                                        <!-- Email -->
-                                        <div class="form-floating mb-3">
-                                            <input class="form-control <?= session('errors.email') ? 'is-invalid' : '' ?>"
-                                                   id="inputEmail"
-                                                   type="email"
-                                                   name="email"
-                                                   placeholder="Email"
-                                                   value="<?= old('email') ?>"
-                                                   aria-label="Email"
-                                                   required />
-                                            <label for="inputEmail">Email</label>
-                                            <?php if (session('errors.email')) : ?>
-                                                <div class="invalid-feedback">
-                                                    <?= session('errors.email') ?>
                                                 </div>
                                             <?php endif; ?>
                                         </div>
@@ -74,7 +56,6 @@
                                                    type="password"
                                                    name="password"
                                                    placeholder="Password"
-                                                   aria-label="Password"
                                                    required />
                                             <label for="inputPassword">Password</label>
                                             <?php if (session('errors.password')) : ?>
@@ -91,7 +72,6 @@
                                                    type="password"
                                                    name="confirm_password"
                                                    placeholder="Confirm Password"
-                                                   aria-label="Confirm Password"
                                                    required />
                                             <label for="inputConfirmPassword">Confirm Password</label>
                                             <?php if (session('errors.confirm_password')) : ?>
@@ -109,46 +89,11 @@
                                                    name="nama_lengkap"
                                                    placeholder="Full Name"
                                                    value="<?= old('nama_lengkap') ?>"
-                                                   aria-label="Full Name"
                                                    required />
                                             <label for="inputFullName">Full Name</label>
                                             <?php if (session('errors.nama_lengkap')) : ?>
                                                 <div class="invalid-feedback">
                                                     <?= session('errors.nama_lengkap') ?>
-                                                </div>
-                                            <?php endif; ?>
-                                        </div>
-
-                                        <!-- Address -->
-                                        <div class="form-floating mb-3">
-                                            <textarea class="form-control <?= session('errors.alamat') ? 'is-invalid' : '' ?>"
-                                                      id="inputAddress"
-                                                      name="alamat"
-                                                      placeholder="Address"
-                                                      aria-label="Address"
-                                                      required><?= old('alamat') ?></textarea>
-                                            <label for="inputAddress">Address</label>
-                                            <?php if (session('errors.alamat')) : ?>
-                                                <div class="invalid-feedback">
-                                                    <?= session('errors.alamat') ?>
-                                                </div>
-                                            <?php endif; ?>
-                                        </div>
-
-                                        <!-- Phone -->
-                                        <div class="form-floating mb-3">
-                                            <input class="form-control <?= session('errors.telepon') ? 'is-invalid' : '' ?>"
-                                                   id="inputPhone"
-                                                   type="text"
-                                                   name="telepon"
-                                                   placeholder="Phone"
-                                                   value="<?= old('telepon') ?>"
-                                                   aria-label="Phone"
-                                                   required />
-                                            <label for="inputPhone">Phone</label>
-                                            <?php if (session('errors.telepon')) : ?>
-                                                <div class="invalid-feedback">
-                                                    <?= session('errors.telepon') ?>
                                                 </div>
                                             <?php endif; ?>
                                         </div>
@@ -163,7 +108,7 @@
                                 <!-- Login Link -->
                                 <div class="card-footer text-center py-3">
                                     <div class="small">
-                                        <a href="<?= base_url('auth/login') ?>">Already have an account? Login!</a>
+                                        <a href="<?= base_url('admin/login') ?>">Already have an account? Login!</a>
                                     </div>
                                 </div>
                             </div>

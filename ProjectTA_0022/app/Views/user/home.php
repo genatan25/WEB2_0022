@@ -4,122 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Genatan Kaos - Custom T-Shirt Printing</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 5%;
-            background: white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            position: relative;
-            z-index: 1000;
-        }
-
-        .logo {
-            font-weight: bold;
-            font-size: 1.5rem;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: #333;
-        }
-
-        .auth-buttons {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .auth-buttons .shop-button {
-            background: white;
-            color: #4285f4;
-            padding: 8px 20px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-size: 14px;
-            border: 2px solid #4285f4;
-            box-sizing: border-box;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            cursor: pointer;
-        }
-
-        .register {
-            background: #2196F3;
-            color: white;
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .hero-section {
-        position: relative;
-        width: 90%; 
-        height: 65vh;
-        overflow: hidden;
-        background-image: url('/uploads/GAMBAR KAOS 2.jpg');
-        background-size: cover;
-        background-position: center;
-        border-radius: 15px; 
-        margin: 0 auto; 
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
-        }
-
-        .text-overlay {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            width: 100%;
-            padding: 20px;
-        }
-
-        .main-heading {
-            color: #2196F3;
-            font-size: 3.5rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .sub-heading {
-            color: #333;
-            font-size: 1.5rem;
-            font-weight: bold;
-            max-width: 600px;
-            margin: 0 auto;
-            text-shadow: 1px 1px 2px rgba(255,255,255,0.9);
-        }
-
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-
-            .main-heading {
-                font-size: 2rem;
-            }
-
-            .sub-heading {
-                font-size: 1.2rem;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="<?php echo base_url('template/css/tambahan.css'); ?>" rel="stylesheet">
 </head>
 <body>
     <nav>
@@ -130,9 +16,61 @@
             <a href="#">Tentang Kami</a>
         </div>
         <div class="auth-buttons">
-       
-        <span>👤</span> Login
-            <button class="shop-button">Mulai Belanja</button>
+            <button class="shop-button">
+                <i class="fas fa-shopping-cart"></i>
+                Mulai Belanja
+            </button>
+            <div class="profile-container">
+                <?php if (isset($is_logged_in) && $is_logged_in): ?>
+                    <div 
+                        class="profile-circle" 
+                        style="background-color: <?= !empty($user_data['profile_color']) ? htmlspecialchars($user_data['profile_color'], ENT_QUOTES, 'UTF-8') : '#4285f4'; ?>"
+                    >
+                        <?= substr($user_data['nama_lengkap'], 0, 1) ?>
+                    </div>
+                <?php else: ?>
+                    <div class="profile-circle guest-circle">
+                        <i class="fas fa-user"></i>
+                    </div>
+                <?php endif; ?>
+
+                <div class="profile-dropdown">
+                    <?php if (isset($is_logged_in) && $is_logged_in): ?>
+                        <div class="dropdown-item">
+                            <i class="fas fa-user"></i>
+                            <span><?= htmlspecialchars($user_data['nama_lengkap'], ENT_QUOTES, 'UTF-8') ?></span>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item" id="settings-trigger">
+                            <i class="fas fa-cog"></i>
+                            <span>Pengaturan</span>
+                            <i class="fas fa-chevron-right" style="margin-left: auto;"></i>
+                            <div class="settings-submenu">
+                                <div class="theme-toggle">
+                                    <span>Tema Gelap</span>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="themeToggle">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="<?= base_url('home/logout') ?>" class="dropdown-item">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Keluar</span>
+                        </a>
+                    <?php else: ?>
+                        <a href="<?= base_url('auth/login') ?>" class="dropdown-item">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>Masuk</span>
+                        </a>
+                        <a href="<?= base_url('auth/register') ?>" class="dropdown-item">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Daftar</span>
+                        </a>
+                    <?php endif; ?>
+                </div>
+            </div>
         </div>
     </nav>
 
@@ -142,5 +80,6 @@
             <p class="sub-heading">Genatan Kaos melayani buat kamu yang pengen order kaos custom dengan jumlah berapapun yang kamu mau</p>
         </div>
     </div>
+    <script src="<?php echo base_url('/template/js/tambahan.js'); ?>"></script>
 </body>
 </html>

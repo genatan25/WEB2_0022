@@ -4,10 +4,10 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class UserModel extends Model
+class AdminModel extends Model
 {
-    protected $table = 'user';
-    protected $primaryKey = 'id_user';
+    protected $table = 'admin'; // Nama tabel sesuai dengan database
+    protected $primaryKey = 'id_admin'; // Primary key
     protected $useAutoIncrement = true;
     protected $returnType = 'array';
     protected $useSoftDeletes = false;
@@ -15,10 +15,7 @@ class UserModel extends Model
     protected $allowedFields = [
         'username',
         'password',
-        'email',
         'nama_lengkap',
-        'alamat',
-        'telepon',
         'profile_color',
         'created_at',
         'updated_at'
@@ -29,12 +26,9 @@ class UserModel extends Model
     protected $updatedField = 'updated_at';
 
     protected $validationRules = [
-        'username'     => 'required|min_length[5]|is_unique[user.username]',
+        'username'     => 'required|min_length[5]|is_unique[admin.username]',
         'password'     => 'required|min_length[8]',
-        'email'        => 'required|valid_email|is_unique[user.email]',
         'nama_lengkap' => 'required',
-        'alamat'       => 'required',
-        'telepon'      => 'required|numeric',
     ];
 
     protected $validationMessages = [
@@ -47,26 +41,31 @@ class UserModel extends Model
             'required'    => 'Password wajib diisi.',
             'min_length'  => 'Password minimal harus 8 karakter.',
         ],
-        'email' => [
-            'required'    => 'Email wajib diisi.',
-            'valid_email' => 'Email tidak valid.',
-            'is_unique'   => 'Email sudah terdaftar.',
-        ],
-        'telepon' => [
-            'required'    => 'Nomor telepon wajib diisi.',
-            'numeric'     => 'Nomor telepon hanya boleh berisi angka.',
+        'nama_lengkap' => [
+            'required'    => 'Nama lengkap wajib diisi.',
         ],
     ];
 
     protected $skipValidation = false;
 
+    /**
+     * Generate random profile color for an admin.
+     *
+     * @return string
+     */
     public function generateProfileColor()
     {
         $colors = ['#4285f4', '#34a853', '#fbbc05', '#ea4335', '#46bdc6', '#9c27b0'];
         return $colors[array_rand($colors)];
     }
 
-    public function getUserByUsername($username)
+    /**
+     * Get admin data by username.
+     *
+     * @param string $username
+     * @return array|null
+     */
+    public function getAdminByUsername($username)
     {
         return $this->where('username', $username)->first();
     }
