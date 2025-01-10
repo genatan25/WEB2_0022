@@ -79,7 +79,8 @@
         .banner {
             width: 100%;
             height: 260px;
-            background-image: url('/uploads/GAMBAR KAOS HOME.jpg');
+            /* Ganti url() sesuai penempatan file gambar Anda */
+            background-image: url('<?= base_url("uploads/GAMBAR KAOS HOME.jpg") ?>');
             background-position: center;
             background-size: cover;
             background-repeat: no-repeat;
@@ -186,16 +187,21 @@
                 <a href="#">Hubungi kami</a>
             </nav>
             <div class="login-section">
-                <a href="/admin/register_admin">
+                <!-- Menuju form register admin -->
+                <a href="<?= base_url('/admin/register_admin') ?>">
                     <span>👤</span> Register
                 </a>
+                <!-- Bisa diarahkan ke shop / laman utama toko -->
                 <a href="#" class="login-button">Mulai Belanja</a>
             </div>
         </header>
 
+        <!-- Banner / Gambar -->
         <div class="banner"></div>
 
-        <form class="login-form" action="/admin/dashboard" method="post">
+        <!-- FORM LOGIN -->
+        <!-- Pastikan action mengarah ke route POST /admin/login -->
+        <form class="login-form" action="<?= base_url('/admin/login') ?>" method="post">
             <?= csrf_field() ?>
             <div class="form-group">
                 <label class="form-label">Username</label>
@@ -212,6 +218,8 @@
                 </div>
             </div>
             <button type="submit" class="login-btn">Login</button>
+
+            <!-- Tampilkan pesan error dari session, jika ada -->
             <?php if (session()->getFlashdata('error')): ?>
                 <p class="error-message"><?= session()->getFlashdata('error') ?></p>
             <?php endif; ?>

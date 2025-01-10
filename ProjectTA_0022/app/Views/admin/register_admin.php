@@ -1,10 +1,9 @@
-<!-- File: app/Views/admin/register_admin.php -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register Admin - Admin Panel</title>
     <link href="<?= base_url('template/css/styles.css') ?>" rel="stylesheet">
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -28,13 +27,19 @@
                                         </div>
                                     <?php endif; ?>
 
-                                    <!-- Registration Form -->
+                                    <?php if (session()->getFlashdata('success')) : ?>
+                                        <div class="alert alert-success" role="alert">
+                                            <?= session()->getFlashdata('success') ?>
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <!-- Form Registrasi -->
                                     <form action="<?= base_url('admin/register_admin') ?>" method="post">
                                         <?= csrf_field() ?>
 
                                         <!-- Username -->
                                         <div class="form-floating mb-3">
-                                            <input class="form-control <?= session('errors.username') ? 'is-invalid' : '' ?>"
+                                            <input class="form-control <?= isset(session('errors')['username']) ? 'is-invalid' : '' ?>"
                                                    id="inputUsername"
                                                    type="text"
                                                    name="username"
@@ -42,73 +47,73 @@
                                                    value="<?= old('username') ?>"
                                                    required />
                                             <label for="inputUsername">Username</label>
-                                            <?php if (session('errors.username')) : ?>
+                                            <?php if (isset(session('errors')['username'])) : ?>
                                                 <div class="invalid-feedback">
-                                                    <?= session('errors.username') ?>
+                                                    <?= session('errors')['username'] ?>
                                                 </div>
                                             <?php endif; ?>
                                         </div>
 
                                         <!-- Password -->
                                         <div class="form-floating mb-3">
-                                            <input class="form-control <?= session('errors.password') ? 'is-invalid' : '' ?>"
+                                            <input class="form-control <?= isset(session('errors')['password']) ? 'is-invalid' : '' ?>"
                                                    id="inputPassword"
                                                    type="password"
                                                    name="password"
                                                    placeholder="Password"
                                                    required />
                                             <label for="inputPassword">Password</label>
-                                            <?php if (session('errors.password')) : ?>
+                                            <?php if (isset(session('errors')['password'])) : ?>
                                                 <div class="invalid-feedback">
-                                                    <?= session('errors.password') ?>
+                                                    <?= session('errors')['password'] ?>
                                                 </div>
                                             <?php endif; ?>
                                         </div>
 
                                         <!-- Confirm Password -->
                                         <div class="form-floating mb-3">
-                                            <input class="form-control <?= session('errors.confirm_password') ? 'is-invalid' : '' ?>"
+                                            <input class="form-control <?= isset(session('errors')['confirm_password']) ? 'is-invalid' : '' ?>"
                                                    id="inputConfirmPassword"
                                                    type="password"
                                                    name="confirm_password"
                                                    placeholder="Confirm Password"
                                                    required />
                                             <label for="inputConfirmPassword">Confirm Password</label>
-                                            <?php if (session('errors.confirm_password')) : ?>
+                                            <?php if (isset(session('errors')['confirm_password'])) : ?>
                                                 <div class="invalid-feedback">
-                                                    <?= session('errors.confirm_password') ?>
+                                                    <?= session('errors')['confirm_password'] ?>
                                                 </div>
                                             <?php endif; ?>
                                         </div>
 
-                                        <!-- Full Name -->
+                                        <!-- Nama Lengkap -->
                                         <div class="form-floating mb-3">
-                                            <input class="form-control <?= session('errors.nama_lengkap') ? 'is-invalid' : '' ?>"
+                                            <input class="form-control <?= isset(session('errors')['nama_lengkap']) ? 'is-invalid' : '' ?>"
                                                    id="inputFullName"
                                                    type="text"
                                                    name="nama_lengkap"
                                                    placeholder="Full Name"
                                                    value="<?= old('nama_lengkap') ?>"
                                                    required />
-                                            <label for="inputFullName">Full Name</label>
-                                            <?php if (session('errors.nama_lengkap')) : ?>
+                                            <label for="inputFullName">Nama Lengkap</label>
+                                            <?php if (isset(session('errors')['nama_lengkap'])) : ?>
                                                 <div class="invalid-feedback">
-                                                    <?= session('errors.nama_lengkap') ?>
+                                                    <?= session('errors')['nama_lengkap'] ?>
                                                 </div>
                                             <?php endif; ?>
                                         </div>
 
-                                        <!-- Submit Button -->
+                                        <!-- Tombol Submit -->
                                         <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
                                             <button class="btn btn-primary" type="submit">Register</button>
                                         </div>
                                     </form>
                                 </div>
 
-                                <!-- Login Link -->
+                                <!-- Link ke Login -->
                                 <div class="card-footer text-center py-3">
                                     <div class="small">
-                                        <a href="<?= base_url('admin/login') ?>">Already have an account? Login!</a>
+                                        <a href="<?= base_url('admin/login') ?>">Sudah punya akun? Login!</a>
                                     </div>
                                 </div>
                             </div>
@@ -123,11 +128,11 @@
             <footer class="py-4 bg-light mt-auto">
                 <div class="container-fluid px-4">
                     <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; Your Website <?= date('Y') ?></div>
+                        <div class="text-muted">Hak Cipta &copy; Website Anda <?= date('Y') ?></div>
                         <div>
-                            <a href="#">Privacy Policy</a>
+                            <a href="#">Kebijakan Privasi</a>
                             &middot;
-                            <a href="#">Terms &amp; Conditions</a>
+                            <a href="#">Syarat &amp; Ketentuan</a>
                         </div>
                     </div>
                 </div>
@@ -135,7 +140,7 @@
         </div>
     </div>
 
-    <!-- Scripts -->
+    <!-- Script -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="<?= base_url('template/js/scripts.js') ?>"></script>
 </body>

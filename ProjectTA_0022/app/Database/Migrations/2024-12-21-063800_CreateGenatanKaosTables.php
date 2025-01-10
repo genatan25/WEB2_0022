@@ -8,124 +8,178 @@ class CreateGenatanKaosTables extends Migration
 {
     public function up()
     {
-        // Tabel user
+        /*
+         * 1. Tabel Admins
+         */
         $this->forge->addField([
-            'id_user'       => ['type' => 'INT', 'auto_increment' => true],
-            'username'      => ['type' => 'VARCHAR', 'constraint' => 50],
-            'password'      => ['type' => 'VARCHAR', 'constraint' => 255],
-            'email'         => ['type' => 'VARCHAR', 'constraint' => 100],
-            'nama_lengkap'  => ['type' => 'VARCHAR', 'constraint' => 100],
-            'alamat'        => ['type' => 'TEXT'],
-            'telepon'       => ['type' => 'VARCHAR', 'constraint' => 15],
-            'profile_color' => ['type' => 'VARCHAR', 'constraint' => 7], // Field tambahan untuk warna profil
-            'created_at'    => ['type' => 'TIMESTAMP', 'null' => true],
-            'updated_at'    => ['type' => 'TIMESTAMP', 'null' => true],
-        ]);
-        $this->forge->addKey('id_user', true);
-        $this->forge->createTable('user');
-
-        // Tabel admin
-        $this->forge->addField([
-            'id_admin'      => ['type' => 'INT', 'auto_increment' => true],
-            'username'      => ['type' => 'VARCHAR', 'constraint' => 50],
-            'password'      => ['type' => 'VARCHAR', 'constraint' => 255],
-            'nama_lengkap'  => ['type' => 'VARCHAR', 'constraint' => 100],
-            'profile_color' => ['type' => 'VARCHAR', 'constraint' => 7], // Field tambahan untuk warna profil
-            'created_at'    => ['type' => 'TIMESTAMP', 'null' => true],
-            'updated_at'    => ['type' => 'TIMESTAMP', 'null' => true],
+            'id_admin' => [
+                'type'           => 'INT',
+                'constraint'     => 11,
+                'unsigned'       => true,
+                'auto_increment' => true,
+            ],
+            'username' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 50,
+                'unique'     => true,
+            ],
+            'password' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 255,
+            ],
+            'nama_lengkap' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 100,
+            ],
+            'profile_color' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 7,
+                'default'    => '#FFFFFF',
+            ],
+            'created_at' => [
+                'type'    => 'DATETIME',
+                'null'    => true,
+                'default' => null,
+            ],
+            'updated_at' => [
+                'type'    => 'DATETIME',
+                'null'    => true,
+                'default' => null,
+            ],
         ]);
         $this->forge->addKey('id_admin', true);
-        $this->forge->createTable('admin');
+        $this->forge->createTable('admins', true);
 
-        // Tabel kategori
+        /*
+         * 2. Tabel Categories
+         */
         $this->forge->addField([
-            'id_kategori'   => ['type' => 'INT', 'auto_increment' => true],
-            'nama_kategori' => ['type' => 'VARCHAR', 'constraint' => 50],
-            'created_at'    => ['type' => 'TIMESTAMP', 'null' => true],
-            'updated_at'    => ['type' => 'TIMESTAMP', 'null' => true],
+            'id_kategori' => [
+                'type'           => 'INT',
+                'constraint'     => 11,
+                'unsigned'       => true,
+                'auto_increment' => true,
+            ],
+            'nama_kategori' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 50,
+                'unique'     => true,
+            ],
+            'created_at' => [
+                'type'    => 'DATETIME',
+                'null'    => true,
+                'default' => null,
+            ],
+            'updated_at' => [
+                'type'    => 'DATETIME',
+                'null'    => true,
+                'default' => null,
+            ],
         ]);
         $this->forge->addKey('id_kategori', true);
-        $this->forge->createTable('kategori');
+        $this->forge->createTable('categories', true);
 
-        // Tabel produk
+        /*
+         * 3. Tabel Products
+         */
         $this->forge->addField([
-            'id_produk'     => ['type' => 'INT', 'auto_increment' => true],
-            'nama_produk'   => ['type' => 'VARCHAR', 'constraint' => 100],
-            'deskripsi'     => ['type' => 'TEXT'],
-            'harga'         => ['type' => 'DECIMAL', 'constraint' => '12,2'],
-            'gambar'        => ['type' => 'VARCHAR', 'constraint' => 255],
-            'id_kategori'   => ['type' => 'INT'],
-            'stok'          => ['type' => 'INT'],
-            'created_at'    => ['type' => 'TIMESTAMP', 'null' => true],
-            'updated_at'    => ['type' => 'TIMESTAMP', 'null' => true],
+            'id_produk' => [
+                'type'           => 'INT',
+                'constraint'     => 11,
+                'unsigned'       => true,
+                'auto_increment' => true,
+            ],
+            'nama_produk' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 100,
+            ],
+            'deskripsi' => [
+                'type' => 'TEXT',
+                'null' => true,
+            ],
+            'harga' => [
+                'type'       => 'DECIMAL',
+                'constraint' => '12,2',
+                'default'    => 0.00,
+            ],
+            'gambar' => [
+                'type'       => 'BLOB',
+                'null'       => true,
+            ],
+            'id_kategori' => [
+                'type'       => 'INT',
+                'constraint' => 11,
+                'unsigned'   => true,
+            ],
+            'stok' => [
+                'type'       => 'INT',
+                'constraint' => 11,
+                'default'    => 0,
+            ],
+            'created_at' => [
+                'type'    => 'DATETIME',
+                'null'    => true,
+                'default' => null,
+            ],
+            'updated_at' => [
+                'type'    => 'DATETIME',
+                'null'    => true,
+                'default' => null,
+            ],
         ]);
         $this->forge->addKey('id_produk', true);
-        $this->forge->addForeignKey('id_kategori', 'kategori', 'id_kategori', 'CASCADE', 'CASCADE');
-        $this->forge->createTable('produk');
+        $this->forge->addForeignKey('id_kategori', 'categories', 'id_kategori', 'CASCADE', 'CASCADE');
+        $this->forge->createTable('products', true);
 
-        // Tabel transaksi
+        /*
+         * 4. Tabel Frontend_Pages
+         */
         $this->forge->addField([
-            'id_transaksi'  => ['type' => 'INT', 'auto_increment' => true],
-            'id_user'       => ['type' => 'INT'],
-            'total_harga'   => ['type' => 'DECIMAL', 'constraint' => '12,2'],
-            'status'        => ['type' => 'ENUM', 'constraint' => ['pending', 'paid', 'shipped', 'completed', 'canceled']],
-            'created_at'    => ['type' => 'TIMESTAMP', 'null' => true],
-            'updated_at'    => ['type' => 'TIMESTAMP', 'null' => true],
+            'id_page' => [
+                'type'           => 'INT',
+                'constraint'     => 11,
+                'unsigned'       => true,
+                'auto_increment' => true,
+            ],
+            'page_type' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 50,
+                'unique'     => true,
+            ],
+            'title' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 255,
+            ],
+            'content' => [
+                'type' => 'TEXT',
+                'null' => true,
+            ],
+            'last_modified_by' => [
+                'type'       => 'INT',
+                'constraint' => 11,
+                'unsigned'   => true,
+            ],
+            'created_at' => [
+                'type'    => 'DATETIME',
+                'null'    => true,
+                'default' => null,
+            ],
+            'updated_at' => [
+                'type'    => 'DATETIME',
+                'null'    => true,
+                'default' => null,
+            ],
         ]);
-        $this->forge->addKey('id_transaksi', true);
-        $this->forge->addForeignKey('id_user', 'user', 'id_user', 'CASCADE', 'CASCADE');
-        $this->forge->createTable('transaksi');
-
-        // Tabel detail_transaksi
-        $this->forge->addField([
-            'id_detail'     => ['type' => 'INT', 'auto_increment' => true],
-            'id_transaksi'  => ['type' => 'INT'],
-            'id_produk'     => ['type' => 'INT'],
-            'jumlah'        => ['type' => 'INT'],
-            'subtotal'      => ['type' => 'DECIMAL', 'constraint' => '12,2'],
-        ]);
-        $this->forge->addKey('id_detail', true);
-        $this->forge->addForeignKey('id_transaksi', 'transaksi', 'id_transaksi', 'CASCADE', 'CASCADE');
-        $this->forge->addForeignKey('id_produk', 'produk', 'id_produk', 'CASCADE', 'CASCADE');
-        $this->forge->createTable('detail_transaksi');
-
-        // Tabel cart
-        $this->forge->addField([
-            'id_cart'       => ['type' => 'INT', 'auto_increment' => true],
-            'id_user'       => ['type' => 'INT'],
-            'id_produk'     => ['type' => 'INT'],
-            'jumlah'        => ['type' => 'INT'],
-            'subtotal'      => ['type' => 'DECIMAL', 'constraint' => '12,2'],
-            'created_at'    => ['type' => 'TIMESTAMP', 'null' => true],
-            'updated_at'    => ['type' => 'TIMESTAMP', 'null' => true],
-        ]);
-        $this->forge->addKey('id_cart', true);
-        $this->forge->addForeignKey('id_user', 'user', 'id_user', 'CASCADE', 'CASCADE');
-        $this->forge->addForeignKey('id_produk', 'produk', 'id_produk', 'CASCADE', 'CASCADE');
-        $this->forge->createTable('cart');
-
-        // Tabel testimoni
-        $this->forge->addField([
-            'id_testimoni'  => ['type' => 'INT', 'auto_increment' => true],
-            'id_user'       => ['type' => 'INT'],
-            'isi_testimoni' => ['type' => 'TEXT'],
-            'created_at'    => ['type' => 'TIMESTAMP', 'null' => true],
-            'updated_at'    => ['type' => 'TIMESTAMP', 'null' => true],
-        ]);
-        $this->forge->addKey('id_testimoni', true);
-        $this->forge->addForeignKey('id_user', 'user', 'id_user', 'CASCADE', 'CASCADE');
-        $this->forge->createTable('testimoni');
+        $this->forge->addKey('id_page', true);
+        $this->forge->addForeignKey('last_modified_by', 'admins', 'id_admin', 'CASCADE', 'CASCADE');
+        $this->forge->createTable('frontend_pages', true);
     }
 
     public function down()
     {
-        $this->forge->dropTable('testimoni', true);
-        $this->forge->dropTable('cart', true);
-        $this->forge->dropTable('detail_transaksi', true);
-        $this->forge->dropTable('transaksi', true);
-        $this->forge->dropTable('produk', true);
-        $this->forge->dropTable('kategori', true);
-        $this->forge->dropTable('admin', true);
-        $this->forge->dropTable('user', true);
+        $this->forge->dropTable('frontend_pages', true);
+        $this->forge->dropTable('products', true);
+        $this->forge->dropTable('categories', true);
+        $this->forge->dropTable('admins', true);
     }
 }

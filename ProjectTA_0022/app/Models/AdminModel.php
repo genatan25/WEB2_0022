@@ -6,13 +6,11 @@ use CodeIgniter\Model;
 
 class AdminModel extends Model
 {
-    protected $table = 'admin'; // Nama tabel sesuai dengan database
-    protected $primaryKey = 'id_admin'; // Primary key
+    protected $table            = 'admins'; // Pastikan ini sesuai dengan nama tabel Anda
+    protected $primaryKey       = 'id_admin'; // Pastikan ini sesuai dengan primary key tabel Anda
     protected $useAutoIncrement = true;
-    protected $returnType = 'array';
-    protected $useSoftDeletes = false;
-
-    protected $allowedFields = [
+    protected $returnType       = 'array';
+    protected $allowedFields    = [
         'username',
         'password',
         'nama_lengkap',
@@ -22,51 +20,28 @@ class AdminModel extends Model
     ];
 
     protected $useTimestamps = true;
-    protected $createdField = 'created_at';
-    protected $updatedField = 'updated_at';
-
-    protected $validationRules = [
-        'username'     => 'required|min_length[5]|is_unique[admin.username]',
-        'password'     => 'required|min_length[8]',
-        'nama_lengkap' => 'required',
-    ];
-
-    protected $validationMessages = [
-        'username' => [
-            'required'    => 'Username wajib diisi.',
-            'min_length'  => 'Username minimal harus 5 karakter.',
-            'is_unique'   => 'Username sudah digunakan.',
-        ],
-        'password' => [
-            'required'    => 'Password wajib diisi.',
-            'min_length'  => 'Password minimal harus 8 karakter.',
-        ],
-        'nama_lengkap' => [
-            'required'    => 'Nama lengkap wajib diisi.',
-        ],
-    ];
-
-    protected $skipValidation = false;
+    protected $createdField  = 'created_at';
+    protected $updatedField  = 'updated_at';
 
     /**
-     * Generate random profile color for an admin.
-     *
-     * @return string
-     */
-    public function generateProfileColor()
-    {
-        $colors = ['#4285f4', '#34a853', '#fbbc05', '#ea4335', '#46bdc6', '#9c27b0'];
-        return $colors[array_rand($colors)];
-    }
-
-    /**
-     * Get admin data by username.
+     * Mengambil admin berdasarkan username
      *
      * @param string $username
      * @return array|null
      */
-    public function getAdminByUsername($username)
+    public function getAdminByUsername(string $username): ?array
     {
         return $this->where('username', $username)->first();
+    }
+
+    /**
+     * Menghasilkan kelas warna profil secara acak
+     *
+     * @return string
+     */
+    public function generateProfileColor(): string
+    {
+        $colors = ['bg-primary', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-warning', 'bg-info', 'bg-dark'];
+        return $colors[array_rand($colors)];
     }
 }

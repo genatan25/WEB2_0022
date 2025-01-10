@@ -1,60 +1,87 @@
+<?php
+// app/Views/admin/manage_products.php
+
+// Pastikan bahwa semua variabel yang diperlukan diatur oleh controller
+// $adminName, $initials, $colorClass, $products, $categories
+?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daftar Produk</title>
+    <!-- Styles -->
     <link href="<?= base_url('template/css/styles.css'); ?>" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 </head>
+
 <body class="sb-nav-fixed">
+    <!-- Navbar -->
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-        <a class="navbar-brand ps-3" href="#">Hallo Admin</a>
-        <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+        <a class="navbar-brand ps-3" href="<?= base_url('/admin/dashboard'); ?>">Hallo Admin</a>
+        <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <!-- Form Pencarian (opsional) -->
         <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
             <div class="input-group">
-                <input class="form-control" type="text" placeholder="Search for..." />
+                <input class="form-control" type="text" placeholder="Cari produk..." aria-label="Cari produk">
                 <button class="btn btn-primary" type="button"><i class="fas fa-search"></i></button>
             </div>
         </form>
+        <!-- Navbar Kanan -->
         <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-user fa-fw"></i>
+                <a class="nav-link dropdown-toggle d-flex align-items-center" 
+                   id="navbarDropdown" 
+                   href="#" 
+                   role="button" 
+                   data-bs-toggle="dropdown" 
+                   aria-expanded="false">
+                   <!-- Tampilkan Inisial dengan Warna Profil -->
+                   <div class="rounded-circle text-white <?= esc($colorClass ?? 'bg-secondary'); ?> d-flex align-items-center justify-content-center" style="width:30px; height:30px;">
+                       <?= esc($initials ?? 'A'); ?>
+                   </div>
+                   <span class="ms-2 d-none d-lg-inline text-white"><?= esc($adminName ?? 'Admin'); ?></span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <li><a class="dropdown-item" href="#">Settings</a></li>
-                    <li><a class="dropdown-item" href="#">Activity Log</a></li>
-                    <li><hr class="dropdown-divider" /></li>
-                    <li><a class="dropdown-item" href="#">Logout</a></li>
+                <li><hr class="dropdown-divider" /></li>
+                    <li><a class="dropdown-item" href="<?= base_url('/admin/logout'); ?>">Logout</a></li>
                 </ul>
             </li>
         </ul>
     </nav>
-    
+
+    <!-- Sidebar & Konten -->
     <div id="layoutSidenav">
+        <!-- Sidebar -->
         <div id="layoutSidenav_nav">
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
                         <div class="sb-sidenav-menu-heading">Menu Admin</div>
-                        <a class="nav-link" href="dashboard">
+                        <a class="nav-link" href="<?= base_url('/admin/dashboard'); ?>">
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                             Dashboard
                         </a>
-                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseProduk" aria-expanded="false">
+                        <a class="nav-link collapsed" href="#" 
+                           data-bs-toggle="collapse" 
+                           data-bs-target="#collapseProduk" 
+                           aria-expanded="false">
                             <div class="sb-nav-link-icon"><i class="fas fa-box"></i></div>
                             Produk
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
-                        <div class="collapse" id="collapseProduk" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                        <div class="collapse" id="collapseProduk" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="manageproducts">Daftar Produk</a>
-                                <a class="nav-link" href="manageCategories">Kategori Produk</a>
+                                <a class="nav-link" href="<?= base_url('/admin/manageProducts'); ?>">Daftar Produk</a>
+                                <a class="nav-link" href="<?= base_url('/admin/manageCategories'); ?>">Kategori Produk</a>
                             </nav>
                         </div>
-                        <a class="nav-link" href="#">
+
+                        <a class="nav-link" href="<?= base_url('/admin/manage_layout'); ?>">
                             <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
                             Tampilan Depan
                         </a>
@@ -62,204 +89,298 @@
                 </div>
                 <div class="sb-sidenav-footer">
                     <div class="small">Logged in as:</div>
-                    Admin
+                    <?= esc($adminName ?? 'Admin'); ?>
                 </div>
             </nav>
         </div>
 
+        <!-- Konten Utama -->
         <div id="layoutSidenav_content">
-            <main>
-                <div class="container-fluid px-4">
-                    <h1 class="mt-4">Daftar Produk</h1>
-                    <ol class="breadcrumb mb-4">
-                        <li class="breadcrumb-item">Dashboard</li>
-                        <li class="breadcrumb-item active">Daftar Produk</li>
-                    </ol>
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <i class="fas fa-table me-1"></i>
-                            Daftar Produk
-                        </div>
-                        <div class="card-body">
-    <!-- Button Tambah Produk -->
-    <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addProductModal">
-        + Tambah Produk
-    </button>
+            <main class="container-fluid px-4">
+                <h1 class="mt-4">Daftar Produk</h1>
+                <ol class="breadcrumb mb-4">
+                    <li class="breadcrumb-item"><a href="<?= base_url('/admin/dashboard'); ?>">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Daftar Produk</li>
+                </ol>
 
-    <!-- Tabel Produk -->
-    <table id="datatablesSimple" class="table table-bordered">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nama Produk</th>
-                <th>Kategori</th>
-                <th>Harga</th>
-                <th>Stok</th>
-                <th>Gambar</th>
-                <th>Deskripsi</th>
-                <th>Tanggal Input</th>
-                <th>Fungsi</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($products as $product): ?>
-                <tr>
-                    <td><?= $product['id_produk'] ?></td>
-                    <td><?= $product['nama_produk'] ?></td>
-                    <td><?= $product['nama_kategori'] ?></td>
-                    <td>Rp <?= number_format($product['harga'], 0, ',', '.') ?></td>
-                    <td><?= $product['stok'] ?></td>
-                    <td><img src="<?= base_url('uploads/' . $product['gambar']) ?>" width="50"></td>
-                    <td><?= $product['deskripsi'] ?></td>
-                    <td><?= $product['created_at'] ?></td>
-                    <td>
-                        <!-- Tombol Ubah -->
-                        <button 
-                            class="btn btn-success btn-sm edit-btn" 
-                            data-product='<?= json_encode($product) ?>'
-                            data-bs-toggle="modal" 
-                            data-bs-target="#editProductModal">Ubah</button>
-                        <!-- Tombol Hapus -->
-                        <button 
-                            class="btn btn-danger btn-sm delete-btn" 
-                            data-id="<?= $product['id_produk'] ?>">Hapus</button>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-</div>
+                <!-- Flashdata success / error -->
+                <?php if (session()->getFlashdata('success')): ?>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <?= esc(session()->getFlashdata('success')) ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php endif; ?>
+                <?php if (session()->getFlashdata('error')): ?>
+                    <?php $errorData = session()->getFlashdata('error'); ?>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <?php
+                            if (is_array($errorData)) {
+                                foreach ($errorData as $err) {
+                                    echo "<div>- " . esc($err) . "</div>";
+                                }
+                            } else {
+                                echo esc($errorData);
+                            }
+                        ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php endif; ?>
 
-<!-- Modal Tambah Produk -->
-<div class="modal fade" id="addProductModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Tambah Produk</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form id="addProductForm" method="post" action="<?= base_url('admin/addProduct') ?>" enctype="multipart/form-data">
-                    <div class="mb-3">
-                        <label class="form-label">Nama Produk</label>
-                        <input type="text" class="form-control" name="nama_produk" required>
+                <!-- Tabel Produk -->
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5><i class="fas fa-table me-1"></i> Daftar Produk</h5>
+                        <!-- Tombol Tambah Produk -->
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                            <i class="fas fa-plus me-2"></i> Tambah Produk
+                        </button>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Kategori</label>
-                        <select class="form-select" name="id_kategori" required>
-                            <?php foreach ($categories as $category): ?>
-                                <option value="<?= $category['id_kategori'] ?>"><?= $category['nama_kategori'] ?></option>
-                            <?php endforeach; ?>
-                        </select>
+                    <div class="card-body">
+                        <!-- Tabel Produk -->
+                        <table id="datatablesSimple" class="table table-bordered table-striped">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nama Produk</th>
+                                    <th>Kategori</th>
+                                    <th>Harga</th>
+                                    <th>Stok</th>
+                                    <th>Gambar</th>
+                                    <th>Deskripsi</th>
+                                    <th>Tanggal Input</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if (!empty($products)): ?>
+                                    <?php foreach ($products as $product): ?>
+                                        <tr>
+                                            <td><?= esc($product['id_produk']) ?></td>
+                                            <td><?= esc($product['nama_produk']) ?></td>
+                                            <td><?= esc($product['nama_kategori']) ?></td>
+                                            <td>Rp <?= number_format($product['harga'], 0, ',', '.') ?></td>
+                                            <td><?= esc($product['stok']) ?></td>
+                                            <td>
+                                                <?php if (!empty($product['gambar'])): ?>
+                                                    <img src="<?= base_url($product['gambar']) ?>" width="50" alt="<?= esc($product['nama_produk']) ?>" class="img-thumbnail">
+                                                <?php else: ?>
+                                                    -
+                                                <?php endif; ?>
+                                            </td>
+                                            <td><?= esc($product['deskripsi']) ?></td>
+                                            <td><?= esc(date('d/m/Y', strtotime($product['created_at']))) ?></td>
+                                            <td>
+                                                <!-- Tombol Edit -->
+                                                <button 
+                                                    class="btn btn-success btn-sm edit-btn" 
+                                                    data-product='<?= json_encode($product) ?>'
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#editProductModal">
+                                                    <i class="fas fa-edit me-1"></i> Ubah
+                                                </button>
+                                                <!-- Tombol Hapus -->
+                                                <button 
+                                                    class="btn btn-danger btn-sm delete-btn" 
+                                                    data-id="<?= esc($product['id_produk']) ?>">
+                                                    <i class="fas fa-trash me-1"></i> Hapus
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <tr>
+                                        <td colspan="9" class="text-center">Belum ada produk.</td>
+                                    </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Harga</label>
-                        <input type="number" class="form-control" name="harga" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Stok</label>
-                        <input type="number" class="form-control" name="stok" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Gambar</label>
-                        <input type="file" class="form-control" name="gambar" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Deskripsi</label>
-                        <textarea class="form-control" name="deskripsi" rows="3" required></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="submit" form="addProductForm" class="btn btn-primary">Simpan</button>
-            </div>
-        </div>
-    </div>
-</div>
+                </div>
+            </main>
 
-<!-- Modal Ubah Produk -->
-<div class="modal fade" id="editProductModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Ubah Produk</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <!-- Modal Tambah Produk -->
+            <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <form id="addProductForm" method="post" action="<?= base_url('admin/products/add') ?>" enctype="multipart/form-data">
+                            <?= csrf_field() ?>
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addProductModalLabel">Tambah Produk</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="nama_produk" class="form-label">Nama Produk</label>
+                                        <input type="text" class="form-control <?= isset(session('errors')['nama_produk']) ? 'is-invalid' : '' ?>" name="nama_produk" id="nama_produk" required value="<?= old('nama_produk') ?>">
+                                        <?php if (isset(session('errors')['nama_produk'])): ?>
+                                            <div class="invalid-feedback">
+                                                <?= esc(session('errors')['nama_produk']) ?>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="id_kategori" class="form-label">Kategori</label>
+                                        <select class="form-select <?= isset(session('errors')['id_kategori']) ? 'is-invalid' : '' ?>" name="id_kategori" id="id_kategori" required>
+                                            <option value="">Pilih Kategori</option>
+                                            <?php foreach ($categories as $category): ?>
+                                                <option value="<?= esc($category['id_kategori']) ?>" <?= old('id_kategori') == $category['id_kategori'] ? 'selected' : '' ?>>
+                                                    <?= esc($category['nama_kategori']) ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                        <?php if (isset(session('errors')['id_kategori'])): ?>
+                                            <div class="invalid-feedback">
+                                                <?= esc(session('errors')['id_kategori']) ?>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="harga" class="form-label">Harga</label>
+                                        <input type="number" class="form-control <?= isset(session('errors')['harga']) ? 'is-invalid' : '' ?>" name="harga" id="harga" min="1" required value="<?= old('harga') ?>">
+                                        <?php if (isset(session('errors')['harga'])): ?>
+                                            <div class="invalid-feedback">
+                                                <?= esc(session('errors')['harga']) ?>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="stok" class="form-label">Stok</label>
+                                        <input type="number" class="form-control <?= isset(session('errors')['stok']) ? 'is-invalid' : '' ?>" name="stok" id="stok" min="0" required value="<?= old('stok') ?>">
+                                        <?php if (isset(session('errors')['stok'])): ?>
+                                            <div class="invalid-feedback">
+                                                <?= esc(session('errors')['stok']) ?>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label for="gambar" class="form-label">Gambar Produk</label>
+                                        <input type="file" class="form-control <?= isset(session('errors')['gambar']) ? 'is-invalid' : '' ?>" name="gambar" id="gambar" accept="image/*" required>
+                                        <?php if (isset(session('errors')['gambar'])): ?>
+                                            <div class="invalid-feedback">
+                                                <?= esc(session('errors')['gambar']) ?>
+                                            </div>
+                                        <?php endif; ?>
+                                        <img id="addImagePreview" src="#" alt="Preview Gambar" class="modal-img-preview" style="display: none;">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label for="deskripsi" class="form-label">Deskripsi Produk</label>
+                                        <textarea class="form-control <?= isset(session('errors')['deskripsi']) ? 'is-invalid' : '' ?>" name="deskripsi" id="deskripsi" rows="4" required><?= esc(old('deskripsi')) ?></textarea>
+                                        <?php if (isset(session('errors')['deskripsi'])): ?>
+                                            <div class="invalid-feedback">
+                                                <?= esc(session('errors')['deskripsi']) ?>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                <button type="submit" class="btn btn-primary">Simpan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div class="modal-body">
-                <form id="editProductForm" method="post" action="<?= base_url('admin/editProduct') ?>" enctype="multipart/form-data">
-                    <input type="hidden" name="id_produk" id="edit_id_produk">
-                    <div class="mb-3">
-                        <label class="form-label">Nama Produk</label>
-                        <input type="text" class="form-control" name="nama_produk" id="edit_nama_produk" required>
+            <!-- End Modal Tambah Produk -->
+
+            <!-- Modal Edit Produk -->
+            <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <form id="editProductForm" method="post" action="<?= base_url('admin/products/edit') ?>" enctype="multipart/form-data">
+                            <?= csrf_field() ?>
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editProductModalLabel">Ubah Produk</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row g-3">
+                                    <!-- Hidden field untuk ID Produk -->
+                                    <div class="col-md-12">
+                                        <input type="hidden" name="id_produk" id="edit_id_produk">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="edit_nama_produk" class="form-label">Nama Produk</label>
+                                        <input type="text" class="form-control <?= isset(session('errors')['nama_produk']) ? 'is-invalid' : '' ?>" name="nama_produk" id="edit_nama_produk" required>
+                                        <?php if (isset(session('errors')['nama_produk'])): ?>
+                                            <div class="invalid-feedback">
+                                                <?= esc(session('errors')['nama_produk']) ?>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="edit_id_kategori" class="form-label">Kategori</label>
+                                        <select class="form-select <?= isset(session('errors')['id_kategori']) ? 'is-invalid' : '' ?>" name="id_kategori" id="edit_id_kategori" required>
+                                            <option value="">Pilih Kategori</option>
+                                            <?php foreach ($categories as $category): ?>
+                                                <option value="<?= esc($category['id_kategori']) ?>">
+                                                    <?= esc($category['nama_kategori']) ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                        <?php if (isset(session('errors')['id_kategori'])): ?>
+                                            <div class="invalid-feedback">
+                                                <?= esc(session('errors')['id_kategori']) ?>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="edit_harga" class="form-label">Harga</label>
+                                        <input type="number" class="form-control <?= isset(session('errors')['harga']) ? 'is-invalid' : '' ?>" name="harga" id="edit_harga" min="1" required>
+                                        <?php if (isset(session('errors')['harga'])): ?>
+                                            <div class="invalid-feedback">
+                                                <?= esc(session('errors')['harga']) ?>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="edit_stok" class="form-label">Stok</label>
+                                        <input type="number" class="form-control <?= isset(session('errors')['stok']) ? 'is-invalid' : '' ?>" name="stok" id="edit_stok" min="0" required>
+                                        <?php if (isset(session('errors')['stok'])): ?>
+                                            <div class="invalid-feedback">
+                                                <?= esc(session('errors')['stok']) ?>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label for="edit_gambar" class="form-label">Gambar Produk (Opsional)</label>
+                                        <input type="file" class="form-control <?= isset(session('errors')['gambar']) ? 'is-invalid' : '' ?>" name="gambar" id="edit_gambar" accept="image/*">
+                                        <?php if (isset(session('errors')['gambar'])): ?>
+                                            <div class="invalid-feedback">
+                                                <?= esc(session('errors')['gambar']) ?>
+                                            </div>
+                                        <?php endif; ?>
+                                        <img id="editImagePreview" src="#" alt="Preview Gambar" class="modal-img-preview" style="display: none;">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label for="edit_deskripsi" class="form-label">Deskripsi Produk</label>
+                                        <textarea class="form-control <?= isset(session('errors')['deskripsi']) ? 'is-invalid' : '' ?>" name="deskripsi" id="edit_deskripsi" rows="4" required></textarea>
+                                        <?php if (isset(session('errors')['deskripsi'])): ?>
+                                            <div class="invalid-feedback">
+                                                <?= esc(session('errors')['deskripsi']) ?>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                <button type="submit" class="btn btn-primary">Simpan</button>
+                            </div>
+                        </form>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Kategori</label>
-                        <select class="form-select" name="id_kategori" id="edit_id_kategori" required>
-                            <?php foreach ($categories as $category): ?>
-                                <option value="<?= $category['id_kategori'] ?>"><?= $category['nama_kategori'] ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Harga</label>
-                        <input type="number" class="form-control" name="harga" id="edit_harga" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Stok</label>
-                        <input type="number" class="form-control" name="stok" id="edit_stok" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Gambar (Opsional)</label>
-                        <input type="file" class="form-control" name="gambar">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Deskripsi</label>
-                        <textarea class="form-control" name="deskripsi" id="edit_deskripsi" rows="3" required></textarea>
-                    </div>
-                </form>
+                </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="submit" form="editProductForm" class="btn btn-primary">Simpan</button>
-            </div>
-        </div>
-    </div>
-</div>
+            <!-- End Modal Edit Produk -->
 
-<script>
-    // Ubah Produk
-    document.querySelectorAll('.edit-btn').forEach(button => {
-        button.addEventListener('click', function () {
-            const product = JSON.parse(this.getAttribute('data-product'));
-            document.getElementById('edit_id_produk').value = product.id_produk;
-            document.getElementById('edit_nama_produk').value = product.nama_produk;
-            document.getElementById('edit_id_kategori').value = product.id_kategori;
-            document.getElementById('edit_harga').value = product.harga;
-            document.getElementById('edit_stok').value = product.stok;
-            document.getElementById('edit_deskripsi').value = product.deskripsi;
-        });
-    });
-
-    // Hapus Produk
-    document.querySelectorAll('.delete-btn').forEach(button => {
-        button.addEventListener('click', function () {
-            if (confirm('Anda yakin ingin menghapus produk ini?')) {
-                const id = this.getAttribute('data-id');
-                window.location.href = `<?= base_url('admin/deleteProduct/') ?>${id}`;
-            }
-        });
-    });
-</script>
-
-            
+            <!-- Footer -->
             <footer class="py-4 bg-light mt-auto">
                 <div class="container-fluid px-4">
                     <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; Your Website 2023</div>
+                        <div class="text-muted">&copy; Genatan Kaos <?= date('Y'); ?></div>
                         <div>
-                            <a href="#">Privacy Policy</a>
-                            &middot;
+                            <a href="#">Privacy Policy</a> &middot; 
                             <a href="#">Terms &amp; Conditions</a>
                         </div>
                     </div>
@@ -268,11 +389,87 @@
         </div>
     </div>
 
+    <!-- Scripts -->
+    <!-- Bootstrap Bundle JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom Scripts -->
     <script src="<?= base_url('template/js/scripts.js'); ?>"></script>
+    <!-- Simple DataTables -->
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"></script>
     <script>
+        // Inisialisasi DataTable
         const dataTable = new simpleDatatables.DataTable("#datatablesSimple");
+
+        // Menangani Klik Tombol Edit
+        const editProductModal = document.getElementById('editProductModal');
+        editProductModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const product = JSON.parse(button.getAttribute('data-product'));
+
+            const modalTitle = editProductModal.querySelector('.modal-title');
+            const editIdProduk = editProductModal.querySelector('#edit_id_produk');
+            const editNamaProduk = editProductModal.querySelector('#edit_nama_produk');
+            const editIdKategori = editProductModal.querySelector('#edit_id_kategori');
+            const editHarga = editProductModal.querySelector('#edit_harga');
+            const editStok = editProductModal.querySelector('#edit_stok');
+            const editDeskripsi = editProductModal.querySelector('#edit_deskripsi');
+            const editImagePreview = editProductModal.querySelector('#editImagePreview');
+
+            modalTitle.textContent = 'Ubah Produk';
+            editIdProduk.value = product.id_produk;
+            editNamaProduk.value = product.nama_produk;
+            editIdKategori.value = product.id_kategori;
+            editHarga.value = product.harga;
+            editStok.value = product.stok;
+            editDeskripsi.value = product.deskripsi;
+
+            // Menampilkan gambar saat ini jika ada
+            if (product.gambar) {
+                editImagePreview.src = "<?= base_url('/') ?>" + product.gambar;
+                editImagePreview.style.display = 'block';
+            } else {
+                editImagePreview.src = '#';
+                editImagePreview.style.display = 'none';
+            }
+        });
+
+        // Menangani Klik Tombol Hapus
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const id = this.getAttribute('data-id');
+                if (confirm('Anda yakin ingin menghapus produk ini?')) {
+                    window.location.href = "<?= base_url('admin/products/delete/') ?>" + id;
+                }
+            });
+        });
+
+        // Preview Gambar untuk Tambah Produk
+        document.getElementById('gambar').addEventListener('change', function(){
+            const [file] = this.files;
+            if (file) {
+                const preview = document.getElementById('addImagePreview');
+                preview.src = URL.createObjectURL(file);
+                preview.style.display = 'block';
+            } else {
+                const preview = document.getElementById('addImagePreview');
+                preview.src = '#';
+                preview.style.display = 'none';
+            }
+        });
+
+        // Preview Gambar untuk Edit Produk
+        document.getElementById('edit_gambar').addEventListener('change', function(){
+            const [file] = this.files;
+            if (file) {
+                const preview = document.getElementById('editImagePreview');
+                preview.src = URL.createObjectURL(file);
+                preview.style.display = 'block';
+            } else {
+                const preview = document.getElementById('editImagePreview');
+                preview.src = '#';
+                preview.style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>
