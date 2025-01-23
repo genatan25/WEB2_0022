@@ -1,5 +1,4 @@
 <?php
-// app/Models/ProductuserModel.php
 
 namespace App\Models;
 
@@ -73,9 +72,9 @@ class ProductuserModel extends Model
     public function getAllProducts(): array
     {
         return $this->select('products.*, categories.nama_kategori')
-                    ->join('categories', 'categories.id_kategori = products.id_kategori')
-                    ->orderBy('created_at', 'DESC')
-                    ->findAll();
+            ->join('categories', 'categories.id_kategori = products.id_kategori')
+            ->orderBy('created_at', 'DESC')
+            ->findAll();
     }
 
     /**
@@ -87,10 +86,10 @@ class ProductuserModel extends Model
     public function getProductsByCategory(int $categoryId): array
     {
         return $this->select('products.*, categories.nama_kategori')
-                    ->join('categories', 'categories.id_kategori = products.id_kategori')
-                    ->where('products.id_kategori', $categoryId)
-                    ->orderBy('created_at', 'DESC')
-                    ->findAll();
+            ->join('categories', 'categories.id_kategori = products.id_kategori')
+            ->where('products.id_kategori', $categoryId)
+            ->orderBy('created_at', 'DESC')
+            ->findAll();
     }
 
     /**
@@ -102,9 +101,9 @@ class ProductuserModel extends Model
     public function getLatestProducts(int $limit = 6): array
     {
         return $this->select('products.*, categories.nama_kategori')
-                    ->join('categories', 'categories.id_kategori = products.id_kategori')
-                    ->orderBy('created_at', 'DESC')
-                    ->limit($limit)
-                    ->findAll();
+            ->join('categories', 'categories.id_kategori = products.id_kategori')
+            ->orderBy('created_at', 'DESC')
+            ->limit($limit)
+            ->findAll();
     }
 }
