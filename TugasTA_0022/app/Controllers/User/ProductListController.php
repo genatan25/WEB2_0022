@@ -23,25 +23,55 @@ class ProductListController extends BaseController
     }
 
     /**
-     * Menampilkan daftar produk
+     * Menampilkan daftar produk dengan filter
      * URL: GET /user/product-list
      */
     public function index()
     {
-        // Mengambil semua kategori
+        // Ambil semua kategori
         $data['categories'] = $this->categoryModel->findAll();
 
-        // Mengambil produk berdasarkan kategori jika filter diterapkan
+        // Ambil parameter query string untuk filter
         $categoryId = $this->request->getGet('category');
+        $priceMin = $this->request->getGet('price_min');
+        $priceMax = $this->request->getGet('price_max');
+        $searchTerm = $this->request->getGet('search');
+
+        // Logika filter untuk produk
+        $builder = $this->productModel->builder();
+
         if ($categoryId && is_numeric($categoryId)) {
-            $data['products'] = $this->productModel->getProductsByCategory($categoryId);
+            $builder->where('id_kategori', $categoryId);
             $data['selectedCategory'] = $categoryId;
         } else {
-            $data['products'] = $this->productModel->getAllProducts();
             $data['selectedCategory'] = null;
         }
 
-        // Memuat view dengan data yang telah disiapkan
+        if ($priceMin && is_numeric($priceMin)) {
+            $builder->where('harga >=', $priceMin);
+            $data['priceMin'] = $priceMin;
+        } else {
+            $data['priceMin'] = null;
+        }
+
+        if ($priceMax && is_numeric($priceMax)) {
+            $builder->where('harga <=', $priceMax);
+            $data['priceMax'] = $priceMax;
+        } else {
+            $data['priceMax'] = null;
+        }
+
+        if ($searchTerm) {
+            $builder->like('nama_produk', $searchTerm);
+            $data['searchTerm'] = $searchTerm;
+        } else {
+            $data['searchTerm'] = null;
+        }
+
+        // Ambil hasil produk setelah filter diterapkan
+        $data['products'] = $builder->get()->getResultArray();
+
+        // Menampilkan data produk ke view
         return view('user/product_list', $data);
     }
 

@@ -3,22 +3,25 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
+use App\Models\TransaksiModel;
+use App\Models\DetailTransaksiModel;
+use CodeIgniter\I18n\Time;
 
 class OrdersController extends BaseController
 {
     public function index()
     {
-        $transaksiModel = new \App\Models\TransaksiModel();
-        $detailTransaksiModel = new \App\Models\DetailTransaksiModel();
+        $transaksiModel = new TransaksiModel();
+        $detailTransaksiModel = new DetailTransaksiModel();
 
-        // Ambil data transaksi
+        // Retrieve transactions with related user details
         $transactions = $transaksiModel
             ->select('transaction.id_transaction, transaction.tgl_transaksi, transaction.id_user, users.username, transaction.jml_produk, transaction.grand_total')
             ->join('users', 'users.id_user = transaction.id_user')
             ->orderBy('transaction.id_transaction', 'DESC')
             ->findAll();
 
-        // Tambahkan detail produk ke setiap transaksi
+        // Add product details for each transaction
         foreach ($transactions as &$transaction) {
             $details = $detailTransaksiModel
                 ->select('detail_transaction.*, products.nama_produk, products.gambar, products.harga')
@@ -26,7 +29,7 @@ class OrdersController extends BaseController
                 ->where('detail_transaction.id_transaction', $transaction['id_transaction'])
                 ->findAll();
 
-            $transaction['products'] = $details; // Tambahkan ke array transaksi
+            $transaction['products'] = $details; // Add product details to the transaction array
         }
 
         return view('admin/pesanan_masuk', [
@@ -34,13 +37,12 @@ class OrdersController extends BaseController
         ]);
     }
 
-
     public function getTransactionDetails($transactionId)
     {
-        $detailTransaksiModel = new \App\Models\DetailTransaksiModel();
-        $transaksiModel = new \App\Models\TransaksiModel();
+        $detailTransaksiModel = new DetailTransaksiModel();
+        $transaksiModel = new TransaksiModel();
 
-        // Ambil data transaksi
+        // Retrieve transaction data
         $transaction = $transaksiModel
             ->select('transaction.*, users.username')
             ->join('users', 'users.id_user = transaction.id_user')
@@ -48,10 +50,10 @@ class OrdersController extends BaseController
             ->first();
 
         if (!$transaction) {
-            return $this->response->setJSON(['success' => false, 'message' => 'Transaksi tidak ditemukan.']);
+            return $this->response->setJSON(['success' => false, 'message' => 'Transaction not found.']);
         }
 
-        // Ambil detail produk
+        // Retrieve product details for the transaction
         $products = $detailTransaksiModel
             ->select('detail_transaction.*, products.nama_produk, products.gambar, products.harga')
             ->join('products', 'products.id_produk = detail_transaction.id_produk')
@@ -69,33 +71,33 @@ class OrdersController extends BaseController
     public function purchase()
     {
         $session = session();
-        $id_user = $session->get('id_user'); // Ambil ID user dari session
+        $id_user = $session->get('id_user'); // Retrieve user ID from the session
 
         if (!$id_user) {
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Anda harus login terlebih dahulu.'
+                'message' => 'You need to log in first.'
             ]);
         }
 
-        // Ambil data keranjang dari request
-        $cart = $this->request->getJSON(true); // Pastikan data diterima dalam format JSON
+        // Retrieve cart data from the request
+        $cart = $this->request->getJSON(true); // Ensure data is received in JSON format
 
         if (empty($cart) || !is_array($cart)) {
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Keranjang belanja kosong.'
+                'message' => 'The shopping cart is empty.'
             ]);
         }
 
-        $transaksiModel = new \App\Models\TransaksiModel();
-        $detailTransaksiModel = new \App\Models\DetailTransaksiModel();
+        $transaksiModel = new TransaksiModel();
+        $detailTransaksiModel = new DetailTransaksiModel();
 
         $db = \Config\Database::connect();
-        $db->transStart(); // Mulai transaksi database
+        $db->transStart(); // Start database transaction
 
         try {
-            // Simpan data awal ke tabel `transaction` dengan `jml_produk` dan `grand_total` NULL
+            // Insert initial transaction data with null values for products count and grand total
             $transactionData = [
                 'id_user' => $id_user,
                 'jml_produk' => null,
@@ -103,9 +105,9 @@ class OrdersController extends BaseController
             ];
 
             $transaksiModel->insert($transactionData);
-            $id_transaction = $transaksiModel->getInsertID(); // Ambil ID transaksi yang baru saja dimasukkan
+            $id_transaction = $transaksiModel->getInsertID(); // Get the newly inserted transaction ID
 
-            // Simpan data ke tabel `detail_transaction`
+            // Insert data into the `detail_transaction` table for each cart item
             foreach ($cart as $item) {
                 $detailTransactionData = [
                     'id_transaction' => $id_transaction,
@@ -117,7 +119,7 @@ class OrdersController extends BaseController
                 $detailTransaksiModel->insert($detailTransactionData);
             }
 
-            // Hitung `jml_produk` dan `grand_total` dari tabel `detail_transaction`
+            // Calculate the total number of products and grand total for the transaction
             $query = $db->query("
             SELECT 
                 COUNT(*) AS jml_produk, 
@@ -127,35 +129,35 @@ class OrdersController extends BaseController
 
             $result = $query->getRow();
 
-            // Update tabel `transaction` dengan nilai `jml_produk` dan `grand_total` yang dihitung
+            // Update the transaction table with the calculated `jml_produk` and `grand_total`
             $transaksiModel->update($id_transaction, [
                 'jml_produk' => $result->jml_produk,
                 'grand_total' => $result->grand_total,
             ]);
 
-            $db->transComplete(); // Selesaikan transaksi database
+            $db->transComplete(); // Complete the database transaction
 
             if ($db->transStatus() === false) {
-                // Jika terjadi kesalahan, rollback
+                // If there is an error, rollback the transaction
                 $db->transRollback();
                 return $this->response->setJSON([
                     'success' => false,
-                    'message' => 'Terjadi kesalahan saat menyimpan data transaksi.'
+                    'message' => 'An error occurred while saving the transaction data.'
                 ]);
             }
 
-            // Hapus keranjang dari session atau frontend jika berhasil
-            $session->remove('cart'); // Jika keranjang disimpan di session
+            // Remove the cart from the session or frontend if successful
+            $session->remove('cart'); // If the cart is stored in session
 
             return $this->response->setJSON([
                 'success' => true,
-                'message' => 'Transaksi berhasil dilakukan!'
+                'message' => 'Transaction successful!'
             ]);
         } catch (\Exception $e) {
-            $db->transRollback(); // Rollback jika terjadi kesalahan
+            $db->transRollback(); // Rollback in case of an error
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+                'message' => 'An error occurred: ' . $e->getMessage()
             ]);
         }
     }

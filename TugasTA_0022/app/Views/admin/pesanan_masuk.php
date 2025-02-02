@@ -10,6 +10,71 @@
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+
+    <!-- Print Styles -->
+    <style>
+        @media print {
+            body {
+                font-family: Arial, sans-serif;
+            }
+
+            .container-fluid {
+                max-width: 100%;
+            }
+
+            .navbar,
+            .footer,
+            #layoutSidenav_nav {
+                display: none;
+            }
+
+            .content-wrapper {
+                margin-top: 20px;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 10px;
+            }
+
+            table th,
+            table td {
+                border: 1px solid #000;
+                padding: 8px;
+                text-align: left;
+            }
+
+            table th {
+                background-color: #f2f2f2;
+            }
+
+            #transactionDetails {
+                margin-top: 20px;
+            }
+
+            #transactionDetails table {
+                width: 100%;
+                border: 1px solid #ddd;
+            }
+
+            #transactionDetails table th,
+            #transactionDetails table td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: left;
+            }
+
+            #transactionDetails img {
+                width: 50px;
+                height: auto;
+            }
+
+            #transactionDetails h6 {
+                margin: 10px 0;
+            }
+        }
+    </style>
 </head>
 
 <body class="sb-nav-fixed">
@@ -19,14 +84,12 @@
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle">
             <i class="fas fa-bars"></i>
         </button>
-        <!-- Form Pencarian (opsional) -->
         <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
             <div class="input-group">
                 <input class="form-control" type="text" placeholder="Cari transaksi..." aria-label="Cari produk">
                 <button class="btn btn-primary" type="button"><i class="fas fa-search"></i></button>
             </div>
         </form>
-        <!-- Navbar Kanan -->
         <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle d-flex align-items-center"
@@ -35,7 +98,6 @@
                     role="button"
                     data-bs-toggle="dropdown"
                     aria-expanded="false">
-                    <!-- Tampilkan Inisial dengan Warna Profil -->
                     <div class="rounded-circle text-white <?= esc($colorClass ?? 'bg-secondary'); ?> d-flex align-items-center justify-content-center" style="width:30px; height:30px;">
                         <?= esc($initials ?? 'A'); ?>
                     </div>
@@ -51,7 +113,7 @@
         </ul>
     </nav>
 
-    <!-- Sidebar & Konten -->
+    <!-- Sidebar & Content -->
     <div id="layoutSidenav">
         <!-- Sidebar -->
         <div id="layoutSidenav_nav">
@@ -75,12 +137,9 @@
                             <nav class="sb-sidenav-menu-nested nav">
                                 <a class="nav-link" href="<?= base_url('/admin/manageProducts'); ?>">Daftar Produk</a>
                                 <a class="nav-link" href="<?= base_url('/admin/manageCategories'); ?>">Kategori Produk</a>
-                                <!-- detail produk -->
-                                <a class="nav-link" href="<?= base_url('admin/productDetails'); ?>">
-                                    Detail Produk </a>
+                                <a class="nav-link" href="<?= base_url('admin/productDetails'); ?>">Detail Produk</a>
                             </nav>
                         </div>
-
                         <a class="nav-link" href="<?= base_url('/admin/orders'); ?>">
                             <div class="sb-nav-link-icon"><i class="fas fa-shopping-bag"></i></div>
                             Pesanan Masuk
@@ -94,7 +153,7 @@
             </nav>
         </div>
 
-        <!-- Konten Utama -->
+        <!-- Main Content -->
         <div id="layoutSidenav_content">
             <main class="container-fluid px-4">
                 <h1 class="mt-4">Data Transaksi</h1>
@@ -102,10 +161,13 @@
                     <li class="breadcrumb-item"><a href="<?= base_url('/admin/dashboard'); ?>">Dashboard</a></li>
                 </ol>
 
-                <!-- Tabel Transaksi -->
+                <!-- Transaction Table -->
                 <div class="card mb-4">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5><i class="fas fa-table me-1"></i> Daftar Transaksi</h5>
+                        <button class="btn btn-success" onclick="window.print();">
+                            <i class="fas fa-print"></i> Cetak
+                        </button>
                     </div>
                     <div class="card-body">
                         <table id="datatablesSimple" class="table table-bordered table-striped">
@@ -144,7 +206,7 @@
                     </div>
                 </div>
 
-                <!-- Modal Detail Transaksi -->
+                <!-- Modal for Transaction Details -->
                 <div class="modal fade" id="viewTransactionModal" tabindex="-1" aria-labelledby="viewTransactionModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
@@ -154,7 +216,7 @@
                             </div>
                             <div class="modal-body">
                                 <div id="transactionDetails">
-                                    <!-- Konten detail transaksi akan dimuat melalui JavaScript -->
+                                    <!-- Transaction details will be loaded through JavaScript -->
                                 </div>
                             </div>
                         </div>
@@ -171,45 +233,44 @@
                             button.addEventListener('click', function() {
                                 const transactionId = this.getAttribute('data-id');
 
-                                // Tampilkan loading di modal
+                                // Show loading message while fetching data
                                 transactionDetails.innerHTML = '<p class="text-center">Memuat data...</p>';
 
-                                // Fetch detail transaksi melalui Ajax
+                                // Fetch transaction details via AJAX
                                 fetch(`<?= base_url('/admin/orders/getTransactionDetails') ?>/${transactionId}`)
                                     .then(response => response.json())
                                     .then(data => {
                                         if (data.success) {
-                                            // Render detail transaksi ke modal
                                             const products = data.products.map(product => `
-                                <tr>
-                                    <td>
-                                        <img src="${product.gambar}" alt="${product.nama_produk}" width="50" class="me-2">
-                                        ${product.nama_produk}
-                                    </td>
-                                    <td>${product.jumlah}</td>
-                                    <td>Rp ${parseInt(product.harga).toLocaleString('id-ID')}</td>
-                                    <td>Rp ${parseInt(product.total_harga).toLocaleString('id-ID')}</td>
-                                </tr>
-                            `).join('');
+                                                <tr>
+                                                    <td>
+                                                        <img src="<?= base_url('/') ?>${product.gambar}" alt="${product.nama_produk}" width="50" class="me-2">
+                                                        ${product.nama_produk}
+                                                    </td>
+                                                    <td>${product.jumlah}</td>
+                                                    <td>Rp ${parseInt(product.harga).toLocaleString('id-ID')}</td>
+                                                    <td>Rp ${parseInt(product.total_harga).toLocaleString('id-ID')}</td>
+                                                </tr>
+                                            `).join('');
 
                                             transactionDetails.innerHTML = `
-                                <h6>Nama Pengguna: ${data.username}</h6>
-                                <h6>Tanggal Transaksi: ${data.tgl_transaksi}</h6>
-                                <hr>
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Nama Produk</th>
-                                            <th>Jumlah</th>
-                                            <th>Harga</th>
-                                            <th>Total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        ${products}
-                                    </tbody>
-                                </table>
-                            `;
+                                                <h6>Nama Pengguna: ${data.username}</h6>
+                                                <h6>Tanggal Transaksi: ${data.tgl_transaksi}</h6>
+                                                <hr>
+                                                <table class="table table-bordered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nama Produk</th>
+                                                            <th>Jumlah</th>
+                                                            <th>Harga</th>
+                                                            <th>Total</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        ${products}
+                                                    </tbody>
+                                                </table>
+                                            `;
                                         } else {
                                             transactionDetails.innerHTML = '<p class="text-center text-danger">Gagal memuat detail transaksi.</p>';
                                         }
@@ -219,13 +280,12 @@
                                         transactionDetails.innerHTML = '<p class="text-center text-danger">Terjadi kesalahan saat memuat data.</p>';
                                     });
 
-                                // Tampilkan modal
+                                // Show modal
                                 transactionModal.show();
                             });
                         });
                     });
                 </script>
-
             </main>
 
             <!-- Footer -->
@@ -244,86 +304,12 @@
     </div>
 
     <!-- Scripts -->
-    <!-- Bootstrap Bundle JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Custom Scripts -->
     <script src="<?= base_url('template/js/scripts.js'); ?>"></script>
-    <!-- Simple DataTables -->
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"></script>
     <script>
-        // Inisialisasi DataTable
+        // Initialize DataTable
         const dataTable = new simpleDatatables.DataTable("#datatablesSimple");
-
-        // Menangani Klik Tombol Edit
-        const editProductModal = document.getElementById('editProductModal');
-        editProductModal.addEventListener('show.bs.modal', function(event) {
-            const button = event.relatedTarget;
-            const product = JSON.parse(button.getAttribute('data-product'));
-
-            const modalTitle = editProductModal.querySelector('.modal-title');
-            const editIdProduk = editProductModal.querySelector('#edit_id_produk');
-            const editNamaProduk = editProductModal.querySelector('#edit_nama_produk');
-            const editIdKategori = editProductModal.querySelector('#edit_id_kategori');
-            const editHarga = editProductModal.querySelector('#edit_harga');
-            const editStok = editProductModal.querySelector('#edit_stok');
-            const editDeskripsi = editProductModal.querySelector('#edit_deskripsi');
-            const editImagePreview = editProductModal.querySelector('#editImagePreview');
-
-            modalTitle.textContent = 'Ubah Produk';
-            editIdProduk.value = product.id_produk;
-            editNamaProduk.value = product.nama_produk;
-            editIdKategori.value = product.id_kategori;
-            editHarga.value = product.harga;
-            editStok.value = product.stok;
-            editDeskripsi.value = product.deskripsi;
-
-            // Menampilkan gambar saat ini jika ada
-            if (product.gambar) {
-                editImagePreview.src = "<?= base_url('/') ?>" + product.gambar;
-                editImagePreview.style.display = 'block';
-            } else {
-                editImagePreview.src = '#';
-                editImagePreview.style.display = 'none';
-            }
-        });
-
-        // Menangani Klik Tombol Hapus
-        document.querySelectorAll('.delete-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const id = this.getAttribute('data-id');
-                if (confirm('Anda yakin ingin menghapus produk ini?')) {
-                    window.location.href = "<?= base_url('admin/products/delete/') ?>" + id;
-                }
-            });
-        });
-
-        // Preview Gambar untuk Tambah Produk
-        document.getElementById('gambar').addEventListener('change', function() {
-            const [file] = this.files;
-            if (file) {
-                const preview = document.getElementById('addImagePreview');
-                preview.src = URL.createObjectURL(file);
-                preview.style.display = 'block';
-            } else {
-                const preview = document.getElementById('addImagePreview');
-                preview.src = '#';
-                preview.style.display = 'none';
-            }
-        });
-
-        // Preview Gambar untuk Edit Produk
-        document.getElementById('edit_gambar').addEventListener('change', function() {
-            const [file] = this.files;
-            if (file) {
-                const preview = document.getElementById('editImagePreview');
-                preview.src = URL.createObjectURL(file);
-                preview.style.display = 'block';
-            } else {
-                const preview = document.getElementById('editImagePreview');
-                preview.src = '#';
-                preview.style.display = 'none';
-            }
-        });
     </script>
 </body>
 

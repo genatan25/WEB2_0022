@@ -462,9 +462,9 @@
         <h2 class="mb-4 text-center fade-in">Daftar Produk Kami</h2>
         <hr>
 
-        <!-- Filter Kategori, Pencarian, dan Harga -->
         <form method="get" action="<?= base_url('/user/product-list'); ?>" class="filter-form mb-4 fade-in">
             <div class="row g-3 align-items-center">
+                <!-- Filter Kategori -->
                 <div class="col-lg-3 col-md-6">
                     <label for="category" class="form-label">Kategori:</label>
                     <select name="category" id="category" class="form-select">
@@ -476,14 +476,20 @@
                         <?php endforeach; ?>
                     </select>
                 </div>
+
+                <!-- Filter Harga Minimal -->
                 <div class="col-lg-3 col-md-6">
                     <label for="price_min" class="form-label">Harga Minimal:</label>
                     <input type="number" name="price_min" id="price_min" class="form-control" placeholder="Rp 0" value="<?= esc($priceMin ?? ''); ?>">
                 </div>
+
+                <!-- Filter Harga Maksimal -->
                 <div class="col-lg-3 col-md-6">
                     <label for="price_max" class="form-label">Harga Maksimal:</label>
                     <input type="number" name="price_max" id="price_max" class="form-control" placeholder="Rp 0" value="<?= esc($priceMax ?? ''); ?>">
                 </div>
+
+                <!-- Filter Pencarian Produk -->
                 <div class="col-lg-3 col-md-6">
                     <label for="search" class="form-label">Cari Produk:</label>
                     <div class="input-group">
@@ -493,6 +499,7 @@
                 </div>
             </div>
         </form>
+
         <div class="row" id="product-list">
             <?php if (!empty($products)): ?>
                 <?php foreach ($products as $product): ?>
