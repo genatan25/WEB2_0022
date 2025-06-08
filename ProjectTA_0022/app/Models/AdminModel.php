@@ -6,8 +6,8 @@ use CodeIgniter\Model;
 
 class AdminModel extends Model
 {
-    protected $table            = 'admins'; // Pastikan ini sesuai dengan nama tabel Anda
-    protected $primaryKey       = 'id_admin'; // Pastikan ini sesuai dengan primary key tabel Anda
+    protected $table            = 'admins'; 
+    protected $primaryKey       = 'id_admin'; 
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $allowedFields    = [

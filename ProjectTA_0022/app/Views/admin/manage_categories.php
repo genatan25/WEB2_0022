@@ -1,11 +1,9 @@
 <?php
-// app/Views/admin/manage_categories.php
 
-// Pastikan bahwa semua variabel yang diperlukan diatur oleh controller
-// $adminName, $initials, $colorClass, $categories
 ?>
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,6 +14,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 </head>
+
 <body class="sb-nav-fixed">
     <!-- Navbar -->
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -35,27 +34,29 @@
         <!-- Navbar Kanan -->
         <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle d-flex align-items-center" 
-                   id="navbarDropdown" 
-                   href="#" 
-                   role="button" 
-                   data-bs-toggle="dropdown" 
-                   aria-expanded="false">
-                   <!-- Tampilkan Inisial dengan Warna Profil -->
-                   <div class="rounded-circle text-white <?= esc($colorClass ?? 'bg-secondary'); ?> d-flex align-items-center justify-content-center" style="width:30px; height:30px;">
-                       <?= esc($initials ?? 'A'); ?>
-                   </div>
-                   <span class="ms-2 d-none d-lg-inline text-white"><?= esc($adminName ?? 'Admin'); ?></span>
+                <a class="nav-link dropdown-toggle d-flex align-items-center"
+                    id="navbarDropdown"
+                    href="#"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    <!-- Tampilkan Inisial dengan Warna Profil -->
+                    <div class="rounded-circle text-white <?= esc($colorClass ?? 'bg-secondary'); ?> d-flex align-items-center justify-content-center" style="width:30px; height:30px;">
+                        <?= esc($initials ?? 'A'); ?>
+                    </div>
+                    <span class="ms-2 d-none d-lg-inline text-white"><?= esc($adminName ?? 'Admin'); ?></span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <li><hr class="dropdown-divider" /></li>
+                    <li>
+                        <hr class="dropdown-divider" />
+                    </li>
                     <li><a class="dropdown-item" href="<?= base_url('/admin/logout'); ?>">Logout</a></li>
                 </ul>
             </li>
         </ul>
     </nav>
 
-    <!-- Sidebar & Konten -->
+    <!-- Layout Sidenav -->
     <div id="layoutSidenav">
         <!-- Sidebar -->
         <div id="layoutSidenav_nav">
@@ -63,36 +64,54 @@
                 <div class="sb-sidenav-menu">
                     <div class="nav">
                         <div class="sb-sidenav-menu-heading">Menu Admin</div>
+
+                        <!-- Dashboard -->
                         <a class="nav-link" href="<?= base_url('/admin/dashboard'); ?>">
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                             Dashboard
                         </a>
-                        
-                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseProduk">
+
+                        <!-- Products -->
+                        <a class="nav-link collapsed"
+                            href="#"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapseProduk"
+                            aria-expanded="false">
                             <div class="sb-nav-link-icon"><i class="fas fa-box"></i></div>
                             Produk
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
                         <div class="collapse" id="collapseProduk" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="<?= base_url('/admin/manageProducts'); ?>">Daftar Produk</a>
-                                <a class="nav-link" href="<?= base_url('/admin/manageCategories'); ?>">Kategori Produk</a>
+                                <!-- Product List -->
+                                <a class="nav-link" href="<?= base_url('/admin/manageProducts'); ?>">
+                                    Daftar Produk
+                                </a>
+                                <!-- Product Categories -->
+                                <a class="nav-link" href="<?= base_url('/admin/manageCategories'); ?>">
+                                    Kategori Produk
+                                </a>
+                                <!-- detail produk -->
+                                <a class="nav-link" href="<?= base_url('admin/productDetails'); ?>">
+                                    Detail Produk
+                                </a>
                             </nav>
                         </div>
-
-                        <a class="nav-link" href="<?= base_url('/admin/manage_layout'); ?>">
-                            <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
-                            Tampilan Depan
+                        <!-- pesanan -->
+                        <a class="nav-link" href="<?= base_url('/admin/orders'); ?>">
+                            <div class="sb-nav-link-icon"><i class="fas fa-shopping-bag"></i></div>
+                            Pesanan Masuk
                         </a>
                     </div>
                 </div>
+                <!-- Sidebar Footer -->
                 <div class="sb-sidenav-footer">
                     <div class="small">Logged in as:</div>
-                    <?= esc($adminName ?? 'Admin'); ?>
+                    <?= esc($adminName); ?>
                 </div>
             </nav>
         </div>
-
+        
         <!-- Konten Utama -->
         <div id="layoutSidenav_content">
             <main>
@@ -116,14 +135,14 @@
                     <?php if (session()->getFlashdata('error')): ?>
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             <?php
-                                $errorData = session()->getFlashdata('error');
-                                if (is_array($errorData)) {
-                                    foreach ($errorData as $err) {
-                                        echo "<div>- " . esc($err) . "</div>";
-                                    }
-                                } else {
-                                    echo esc($errorData);
+                            $errorData = session()->getFlashdata('error');
+                            if (is_array($errorData)) {
+                                foreach ($errorData as $err) {
+                                    echo "<div>- " . esc($err) . "</div>";
                                 }
+                            } else {
+                                echo esc($errorData);
+                            }
                             ?>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
@@ -166,8 +185,8 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php if(!empty($categories) && is_array($categories)) : ?>
-                                        <?php foreach($categories as $category) : ?>
+                                    <?php if (!empty($categories) && is_array($categories)) : ?>
+                                        <?php foreach ($categories as $category) : ?>
                                             <tr>
                                                 <td><?= esc($category['id_kategori']) ?></td>
                                                 <td><?= esc($category['nama_kategori']) ?></td>
@@ -175,17 +194,17 @@
                                                 <td><?= esc(date('d/m/Y', strtotime($category['created_at']))) ?></td>
                                                 <td>
                                                     <!-- Tombol Edit -->
-                                                    <button 
-                                                        class="btn btn-success btn-sm edit-btn" 
+                                                    <button
+                                                        class="btn btn-success btn-sm edit-btn"
                                                         data-id="<?= esc($category['id_kategori']) ?>"
                                                         data-nama="<?= esc($category['nama_kategori']) ?>"
-                                                        data-bs-toggle="modal" 
+                                                        data-bs-toggle="modal"
                                                         data-bs-target="#editCategoryModal">
                                                         <i class="fas fa-edit me-1"></i> Ubah
                                                     </button>
                                                     <!-- Tombol Hapus -->
-                                                    <button 
-                                                        class="btn btn-danger btn-sm delete-btn" 
+                                                    <button
+                                                        class="btn btn-danger btn-sm delete-btn"
                                                         data-id="<?= esc($category['id_kategori']) ?>">
                                                         <i class="fas fa-trash me-1"></i> Hapus
                                                     </button>
@@ -274,7 +293,7 @@
                     <div class="d-flex align-items-center justify-content-between small">
                         <div class="text-muted">&copy; Genatan Kaos <?= date('Y'); ?></div>
                         <div>
-                            <a href="#">Privacy Policy</a> &middot; 
+                            <a href="#">Privacy Policy</a> &middot;
                             <a href="#">Terms &amp; Conditions</a>
                         </div>
                     </div>
@@ -296,7 +315,7 @@
 
         // Menangani Klik Tombol Edit
         const editCategoryModal = document.getElementById('editCategoryModal');
-        editCategoryModal.addEventListener('show.bs.modal', function (event) {
+        editCategoryModal.addEventListener('show.bs.modal', function(event) {
             const button = event.relatedTarget;
             const id = button.getAttribute('data-id');
             const nama = button.getAttribute('data-nama');
@@ -310,7 +329,7 @@
 
         // Menangani Klik Tombol Hapus
         document.querySelectorAll('.delete-btn').forEach(button => {
-            button.addEventListener('click', function () {
+            button.addEventListener('click', function() {
                 const id = this.getAttribute('data-id');
                 if (confirm('Apakah Anda yakin ingin menghapus kategori ini?')) {
                     window.location.href = "<?= base_url('admin/categories/delete/') ?>" + id;
@@ -319,4 +338,5 @@
         });
     </script>
 </body>
+
 </html>

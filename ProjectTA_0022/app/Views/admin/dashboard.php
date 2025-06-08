@@ -3,6 +3,7 @@
 ?>
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -42,11 +43,11 @@
         <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle d-flex align-items-center"
-                   id="navbarDropdown"
-                   href="#"
-                   role="button"
-                   data-bs-toggle="dropdown"
-                   aria-expanded="false">
+                    id="navbarDropdown"
+                    href="#"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false">
                     <?php if (!empty($profilePicture)): ?>
                         <img src="<?= base_url($profilePicture); ?>" alt="Profile" class="rounded-circle" width="30" height="30">
                     <?php else: ?>
@@ -57,7 +58,9 @@
                     <span class="ms-2 d-none d-lg-inline text-white"><?= esc($adminName); ?></span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
                     <li>
                         <!-- Logout -->
                         <a class="dropdown-item" href="<?= base_url('/admin/logout'); ?>">
@@ -86,10 +89,10 @@
 
                         <!-- Products -->
                         <a class="nav-link collapsed"
-                           href="#"
-                           data-bs-toggle="collapse"
-                           data-bs-target="#collapseProduk"
-                           aria-expanded="false">
+                            href="#"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapseProduk"
+                            aria-expanded="false">
                             <div class="sb-nav-link-icon"><i class="fas fa-box"></i></div>
                             Produk
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -104,13 +107,16 @@
                                 <a class="nav-link" href="<?= base_url('/admin/manageCategories'); ?>">
                                     Kategori Produk
                                 </a>
+                                <!-- detail produk -->
+                                <a class="nav-link" href="<?= base_url('admin/productDetails'); ?>">
+                                    Detail Produk
+                                </a>
                             </nav>
                         </div>
-
-                        <!-- Frontend Layout -->
-                        <a class="nav-link" href="<?= base_url('/admin/manage_layout'); ?>">
-                            <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
-                            Tampilan Depan
+                        <!-- pesanan -->
+                        <a class="nav-link" href="<?= base_url('/admin/orders'); ?>">
+                            <div class="sb-nav-link-icon"><i class="fas fa-shopping-bag"></i></div>
+                            Pesanan Masuk
                         </a>
                     </div>
                 </div>
@@ -144,14 +150,14 @@
                     <?php if (session()->getFlashdata('error')): ?>
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             <?php
-                                $errorData = session()->getFlashdata('error');
-                                if (is_array($errorData)) {
-                                    foreach ($errorData as $err) {
-                                        echo "<div>- " . esc($err) . "</div>";
-                                    }
-                                } else {
-                                    echo esc($errorData);
+                            $errorData = session()->getFlashdata('error');
+                            if (is_array($errorData)) {
+                                foreach ($errorData as $err) {
+                                    echo "<div>- " . esc($err) . "</div>";
                                 }
+                            } else {
+                                echo esc($errorData);
+                            }
                             ?>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
@@ -228,180 +234,199 @@
                         </div>
                     </div>
 
-                    <!-- Recent Sales Chart (Optional) -->
                     <div class="row">
                         <div class="col-lg-8">
-                            <div class="card mb-4">
-                                <div class="card-header">
-                                    <i class="fas fa-chart-line me-1"></i>
-                                    Grafik Penjualan
+                            <div class="card mb-4 shadow-sm">
+                                <div class="card-header d-flex justify-content-between align-items-center bg-primary text-white">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-chart-line me-2"></i>Grafik Penjualan
+                                    </h5>
+                                    <button class="btn btn-sm btn-light" id="refreshSalesChart">
+                                        <i class="fas fa-sync-alt"></i> Refresh
+                                    </button>
                                 </div>
                                 <div class="card-body">
+                                    <p class="text-muted text-center mb-3">Analisis tren penjualan bulanan.</p>
                                     <canvas id="salesChart" width="100%" height="40"></canvas>
                                 </div>
+                                <div class="card-footer text-end">
+                                    <small class="text-muted">Diperbarui terakhir: <span id="lastSalesUpdate">--/--/----</span></small>
+                                </div>
                             </div>
                         </div>
+
                         <div class="col-lg-4">
-                            <!-- Recent Orders or Other Widgets -->
-                            <div class="card mb-4">
-                                <div class="card-header">
-                                    <i class="fas fa-list me-1"></i>
-                                    Pesanan Terbaru
+                            <div class="card mb-4 shadow-sm">
+                                <div class="card-header d-flex justify-content-between align-items-center bg-success text-white">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-list me-2"></i>Pesanan Terbaru
+                                    </h5>
+                                    <button class="btn btn-sm btn-light" id="refreshOrders">
+                                        <i class="fas fa-sync-alt"></i> Refresh
+                                    </button>
                                 </div>
                                 <div class="card-body">
-                                    <!-- Contoh Daftar Pesanan -->
                                     <ul class="list-group">
-                                        <li class="list-group-item">Pesanan #001 - Rp 150.000</li>
-                                        <li class="list-group-item">Pesanan #002 - Rp 200.000</li>
-                                        <li class="list-group-item">Pesanan #003 - Rp 350.000</li>
-                                        <li class="list-group-item">Pesanan #004 - Rp 120.000</li>
-                                        <li class="list-group-item">Pesanan #005 - Rp 500.000</li>
+                                        <!-- Contoh daftar pesanan dengan data dinamis -->
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Pesanan #001
+                                            <span class="badge bg-primary rounded-pill">Rp 150.000</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Pesanan #002
+                                            <span class="badge bg-primary rounded-pill">Rp 200.000</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Pesanan #003
+                                            <span class="badge bg-primary rounded-pill">Rp 350.000</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Pesanan #004
+                                            <span class="badge bg-primary rounded-pill">Rp 120.000</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Pesanan #005
+                                            <span class="badge bg-primary rounded-pill">Rp 500.000</span>
+                                        </li>
                                     </ul>
+                                </div>
+                                <div class="card-footer text-end">
+                                    <small class="text-muted">Diperbarui terakhir: <span id="lastOrdersUpdate">--/--/----</span></small>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Products Table -->
-                    <div class="card mb-4">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5><i class="fas fa-tshirt me-1"></i> Daftar Produk</h5>
-                            <!-- Add Product Button -->
-                            <a href="<?= base_url('/admin/manageProducts/add'); ?>" class="btn btn-primary">
-                                <i class="fas fa-plus me-1"></i> Tambah Produk
-                            </a>
+                    <!-- Footer -->
+                    <footer class="py-4 bg-light mt-auto">
+                        <div class="container-fluid px-4">
+                            <div class="d-flex align-items-center justify-content-between small">
+                                <div class="text-muted">&copy; Genatan Kaos <?= date('Y'); ?></div>
+                                <div>
+                                    <a href="#">Privacy Policy</a>
+                                    &middot;
+                                    <a href="#">Terms &amp; Conditions</a>
+                                </div>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <!-- Data Table -->
-                            <table id="datatablesSimple" class="table table-bordered table-striped">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Nama Produk</th>
-                                        <th>Harga</th>
-                                        <th>Stok</th>
-                                        <th>Kategori</th>
-                                        <th>Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php if (!empty($products) && is_array($products)): ?>
-                                        <?php foreach ($products as $idx => $p): ?>
-                                            <tr>
-                                                <td><?= esc($idx + 1); ?></td>
-                                                <td><?= esc($p['nama_produk']); ?></td>
-                                                <td>Rp <?= number_format($p['harga'], 0, ',', '.'); ?></td>
-                                                <td><?= esc($p['stok']); ?></td>
-                                                <td><?= esc($p['nama_kategori']); ?></td>
-                                                <td>
-                                                    <a href="<?= base_url('/admin/manageProducts/edit/' . $p['id_produk']); ?>" class="btn btn-success btn-sm me-2">
-                                                        <i class="fas fa-edit me-1"></i> Ubah
-                                                    </a>
-                                                    <a href="<?= base_url('/admin/manageProducts/delete/' . $p['id_produk']); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Hapus produk ini?');">
-                                                        <i class="fas fa-trash-alt me-1"></i> Hapus
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    <?php else: ?>
-                                        <tr>
-                                            <td colspan="6" class="text-center">Tidak ada data produk.</td>
-                                        </tr>
-                                    <?php endif; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                    </footer>
 
                 </div>
-            </main>
-
-            <!-- Footer -->
-            <footer class="py-4 bg-light mt-auto">
-                <div class="container-fluid px-4">
-                    <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">&copy; Genatan Kaos <?= date('Y'); ?></div>
-                        <div>
-                            <a href="#">Privacy Policy</a>
-                            &middot;
-                            <a href="#">Terms &amp; Conditions</a>
-                        </div>
-                    </div>
-                </div>
-            </footer>
-
         </div>
-    </div>
 
-    <!-- Bootstrap Bundle JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Bootstrap Bundle JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Custom Scripts -->
-    <script src="<?= base_url('template/js/scripts.js'); ?>"></script>
+        <!-- Custom Scripts -->
+        <script src="<?= base_url('template/js/scripts.js'); ?>"></script>
 
-    <!-- Simple DataTables -->
-    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"></script>
-    <script>
-        // Initialize Simple DataTables
-        const dataTable = new simpleDatatables.DataTable("#datatablesSimple");
-    </script>
+        <!-- Simple DataTables -->
+        <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"></script>
+        <script>
+            // Initialize Simple DataTables
+            const dataTable = new simpleDatatables.DataTable("#datatablesSimple");
+        </script>
 
-    <!-- Chart.js for Sales Chart -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
-    <script>
-        // Example Sales Chart
-        const ctx = document.getElementById('salesChart').getContext('2d');
-        const salesChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
-                datasets: [{
-                    label: 'Penjualan Bulanan',
-                    data: [500000, 700000, 800000, 600000, 900000, 1000000, 850000, 750000, 950000, 1100000, 1200000, 1300000],
-                    backgroundColor: 'rgba(78, 115, 223, 0.05)',
-                    borderColor: 'rgba(78, 115, 223, 1)',
-                    pointBackgroundColor: 'rgba(78, 115, 223, 1)',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: 'rgba(78, 115, 223, 1)',
-                    fill: true,
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top',
-                    },
+        <!-- Chart.js for Sales Chart -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+        <script>
+            document.getElementById('lastSalesUpdate').textContent = new Date().toLocaleDateString();
+            document.getElementById('lastOrdersUpdate').textContent = new Date().toLocaleDateString();
+
+            document.getElementById('refreshSalesChart').addEventListener('click', () => {
+                alert('Grafik penjualan diperbarui!');
+                // Tambahkan logika untuk memperbarui data grafik jika diperlukan
+            });
+
+            document.getElementById('refreshOrders').addEventListener('click', () => {
+                alert('Daftar pesanan diperbarui!');
+                // Tambahkan logika untuk memperbarui daftar pesanan jika diperlukan
+            });
+            // Data penjualan bulanan yang dihasilkan oleh server
+            const monthlySales = [{
+                    bulan: 'Jan',
+                    total: 1500000
                 },
-                interaction: {
-                    mode: 'index',
-                    intersect: false,
+                {
+                    bulan: 'Feb',
+                    total: 2000000
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return 'Rp ' + value.toLocaleString();
-                            }
-                        },
-                        title: {
+                {
+                    bulan: 'Mar',
+                    total: 1800000
+                },
+                {
+                    bulan: 'Apr',
+                    total: 2200000
+                },
+                {
+                    bulan: 'May',
+                    total: 3000000
+                },
+                {
+                    bulan: 'Jun',
+                    total: 2800000
+                }
+            ];
+
+            // Siapkan label dan data untuk Chart.js
+            const labels = monthlySales.map(sale => sale.bulan);
+            const data = monthlySales.map(sale => sale.total);
+
+            // Inisialisasi Chart.js untuk grafik penjualan
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            const salesChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Penjualan Bulanan (Rp)',
+                        data: data,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderWidth: 2,
+                        pointRadius: 5,
+                        pointBackgroundColor: 'rgba(75, 192, 192, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
                             display: true,
-                            text: 'Total Penjualan'
+                            position: 'top',
                         }
                     },
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Bulan'
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Bulan',
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Total Penjualan (Rp)',
+                                font: {
+                                    size: 14
+                                }
+                            },
+                            beginAtZero: true
                         }
                     }
                 }
-            }
-        });
-    </script>
+            });
+
+            // Event untuk tombol refresh
+            document.getElementById('refreshSalesChart').addEventListener('click', () => {
+                alert('Data grafik diperbarui!');
+                // Tambahkan logika untuk memperbarui data grafik dari server
+            });
+        </script>
 </body>
+
 </html>

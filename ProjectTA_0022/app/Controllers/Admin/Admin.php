@@ -5,14 +5,12 @@ namespace App\Controllers\Admin;
 use App\Controllers\BaseController;
 use App\Models\ProductModel;
 use App\Models\CategoryModel;
-use App\Models\LayoutModel;
 use App\Models\AdminModel;
 
 class Admin extends BaseController
 {
     protected $productModel;
     protected $categoryModel;
-    protected $layoutModel;
     protected $adminModel;
     protected $session;
 
@@ -20,7 +18,6 @@ class Admin extends BaseController
     {
         $this->productModel  = new ProductModel();
         $this->categoryModel = new CategoryModel();
-        $this->layoutModel   = new LayoutModel();
         $this->adminModel    = new AdminModel();
         $this->session       = session();
     }
@@ -80,8 +77,8 @@ class Admin extends BaseController
             return redirect()->to('/admin/login')->with('error', 'Silakan login terlebih dahulu.');
         }
 
-        $totalProducts   = $this->productModel->countAllResults();
-        $totalCategories = $this->categoryModel->countAllResults();
+        $totalProducts    = $this->productModel->countAllResults();
+        $totalCategories  = $this->categoryModel->countAllResults();
 
         $adminData = $this->getAdminData();
 
@@ -133,8 +130,8 @@ class Admin extends BaseController
             return redirect()->to('/admin/login')->with('error', 'Silakan login terlebih dahulu.');
         }
 
-        $products   = $this->productModel->getWithCategory(); // Pastikan metode ini ada di ProductModel
-        $categories = $this->categoryModel->findAll();
+        $products    = $this->productModel->getWithCategory(); // Pastikan metode ini ada di ProductModel
+        $categories  = $this->categoryModel->findAll();
 
         $adminData = $this->getAdminData();
 
@@ -149,85 +146,6 @@ class Admin extends BaseController
         ];
 
         return view('admin/manage_products', $data);
-    }
-
-    /**
-     * Manage Layout
-     */
-    public function manage_layout()
-    {
-        if (!$this->session->get('isLoggedIn')) {
-            return redirect()->to('/admin/login')->with('error', 'Silakan login terlebih dahulu.');
-        }
-
-        if ($this->request->getMethod() === 'post') {
-            // Validasi input
-            $rules = [
-                'hero_heading'     => 'required|string|min_length[3]|max_length[100]',
-                'hero_subheading'  => 'required|string|min_length[3]|max_length[200]',
-                'background_image' => 'permit_empty|is_image[background_image]|max_size[background_image,2048]',
-            ];
-
-            if (!$this->validate($rules)) {
-                return redirect()->back()->with('error', $this->validator->getErrors())->withInput();
-            }
-
-            $hero_heading    = $this->request->getPost('hero_heading');
-            $hero_subheading = $this->request->getPost('hero_subheading');
-
-            // Cek apakah ada gambar yang diupload
-            $background_image = ''; // Default jika tidak ada gambar baru
-
-            if ($this->request->getFile('background_image')->isValid() && !$this->request->getFile('background_image')->hasMoved()) {
-                $file = $this->request->getFile('background_image');
-                $newName = $file->getRandomName();
-                $file->move('writable/uploads/frontend/', $newName);
-                $background_image = 'writable/uploads/frontend/' . $newName;
-            }
-
-            // Ambil pengaturan saat ini
-            $currentSettings = $this->layoutModel->getSettings('homepage'); // Pastikan page_type sesuai
-
-            // Siapkan data untuk update
-            $data = [
-                'hero_heading'      => $hero_heading,
-                'hero_subheading'   => $hero_subheading,
-                'last_modified_by'  => $this->session->get('admin_id'),
-            ];
-
-            if ($background_image !== '') {
-                $data['background_image'] = $background_image;
-
-                // Hapus gambar lama jika ada
-                if (!empty($currentSettings['background_image']) && file_exists($currentSettings['background_image'])) {
-                    unlink($currentSettings['background_image']);
-                }
-            }
-
-            try {
-                $this->layoutModel->updatePageSettings($data, $currentSettings['id_page'] ?? null);
-                return redirect()->to('/admin/manage_layout')->with('success', 'Pengaturan berhasil diperbarui!');
-            } catch (\Exception $e) {
-                log_message('error', 'Error updating settings: ' . $e->getMessage());
-                return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui pengaturan.')->withInput();
-            }
-        }
-
-        // Jika GET request, tampilkan form dengan data saat ini
-        $settings = $this->layoutModel->getSettings('homepage'); // Pastikan page_type sesuai
-
-        $adminData = $this->getAdminData();
-
-        $data = [
-            'adminName'      => $adminData['adminName'],
-            'profileColor'   => $adminData['profileColor'],
-            'profilePicture' => $adminData['profilePicture'],
-            'initials'       => $adminData['initials'],
-            'colorClass'     => $adminData['colorClass'],
-            'settings'       => $settings,
-        ];
-
-        return view('admin/manage_layout', $data);
     }
 
     /**
@@ -423,7 +341,7 @@ class Admin extends BaseController
 
         // Cek apakah ada gambar yang diupload
         $file = $this->request->getFile('gambar');
-        if ($file->isValid() && !$file->hasMoved()) {
+        if ($file && $file->isValid() && !$file->hasMoved()) {
             // Hapus gambar lama jika ada
             $oldProduct = $this->productModel->find($id_produk);
             if (!empty($oldProduct['gambar']) && file_exists($oldProduct['gambar'])) {
@@ -436,7 +354,8 @@ class Admin extends BaseController
             $gambar = 'writable/uploads/products/' . $newName;
         } else {
             // Jika tidak ada gambar baru, gunakan gambar lama
-            $gambar = $this->productModel->find($id_produk)['gambar'] ?? '';
+            $oldProduct = $this->productModel->find($id_produk);
+            $gambar = $oldProduct['gambar'] ?? '';
         }
 
         $data = [

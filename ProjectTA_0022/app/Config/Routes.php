@@ -1,35 +1,6 @@
 <?php
 
-namespace Config;
-
-// Membuat instance baru dari RouteCollection class.
-$routes = Services::routes();
-
-// Memuat file routing sistem terlebih dahulu, sehingga app dan ENVIRONMENT
-// dapat mengoverride sesuai kebutuhan.
-if (file_exists(SYSTEMPATH . 'Config/Routes.php')) {
-    require SYSTEMPATH . 'Config/Routes.php';
-}
-
-/*
- * --------------------------------------------------------------------
- * Router Setup
- * --------------------------------------------------------------------
- */
-$routes->setDefaultNamespace('App\Controllers');
-$routes->setDefaultController('Admin\AuthAdmin');
-$routes->setDefaultMethod('login');
-$routes->setTranslateURIDashes(false);
-$routes->set404Override();
-$routes->setAutoRoute(false); // Nonaktifkan autoRoute untuk keamanan
-
-/*
- * --------------------------------------------------------------------
- * Definisi Route
- * --------------------------------------------------------------------
- */
-
-// Route untuk Admin
+// Route untuk Admin dengan prefiks 'admin'
 $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function ($routes) {
     // Auth Admin
     $routes->get('login', 'AuthAdmin::login');
@@ -42,9 +13,6 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function ($rou
     $routes->get('/', 'Admin::dashboard');
     $routes->get('dashboard', 'Admin::dashboard');
 
-    // Manage Layout
-    $routes->match(['get', 'post'], 'manage_layout', 'Admin::manage_layout');
-
     // Route Kategori
     $routes->get('manageCategories', 'CategoryController::index', ['as' => 'admin.manageCategories']);
     $routes->post('categories/add', 'CategoryController::addCategory', ['as' => 'admin.categories.add']);
@@ -56,7 +24,55 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function ($rou
     $routes->post('products/add', 'ProductController::addProduct', ['as' => 'admin.products.add']);
     $routes->post('products/edit', 'ProductController::editProduct', ['as' => 'admin.products.edit']);
     $routes->get('products/delete/(:num)', 'ProductController::deleteProduct/$1', ['as' => 'admin.products.delete']);
+
+    //detail produk
+    $routes->get('productDetails', 'ProductDetails::index', ['as' => 'admin.productDetails']);
+    $routes->post('productDetails/add', 'ProductDetails::add', ['as' => 'admin.productDetails.add']);
+    $routes->post('productDetails/edit', 'ProductDetails::edit', ['as' => 'admin.productDetails.edit']);
+    $routes->get('productDetails/delete/(:num)', 'ProductDetails::delete/$1', ['as' => 'admin.productDetails.delete']);
+
+    //order
+    $routes->get('orders', 'OrdersController::index', ['as' => 'admin.orders']);
+    $routes->get('orders/getTransactionDetails/(:num)', 'OrdersController::getTransactionDetails/$1');
 });
+
+
+$routes->group('user/auth', ['namespace' => 'App\Controllers\User'], function ($routes) {
+    // Halaman Login
+    $routes->get('login', 'AuthUser::login');
+
+    // Proses Login
+    $routes->post('loginProcess', 'AuthUser::loginProcess');
+
+    // Halaman Registrasi
+    $routes->get('register', 'AuthUser::register');
+
+    // Proses Registrasi
+    $routes->post('registerProcess', 'AuthUser::registerProcess');
+
+    // Proses Logout
+    $routes->get('logout', 'AuthUser::logout');
+});
+
+/*
+ * --------------------------------------------------------------------
+ * Rute Pengguna
+ * --------------------------------------------------------------------
+ */
+$routes->get('/', 'User\HomeController::index');
+$routes->group('user', ['namespace' => 'App\Controllers\User'], function ($routes) {
+    $routes->get('/', 'HomeController::index'); // /user/
+    $routes->get('product-list', 'ProductListController::index'); // /user/product-list
+    $routes->get('tentang-kami', 'TentangKamiController::index'); // /user/tentang-kami
+    $routes->get('product-detail/(:num)', 'HomeController::productDetail/$1'); // /user/product-detail/{id}
+
+    $routes->get('/order', 'OrderController::index');
+    $routes->get('/order/show/(:num)', 'OrderController::show/$1');
+    $routes->get('/order/cancel/(:num)', 'OrderController::cancel/$1');
+    $routes->post('/order/create', 'OrderController::create');
+});
+$routes->post('user/purchase', 'Admin\OrdersController::purchase');
+
 
 /*
  * --------------------------------------------------------------------

@@ -1,11 +1,8 @@
 <?php
-// app/Views/admin/manage_products.php
-
-// Pastikan bahwa semua variabel yang diperlukan diatur oleh controller
-// $adminName, $initials, $colorClass, $products, $categories
 ?>
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -34,27 +31,29 @@
         <!-- Navbar Kanan -->
         <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle d-flex align-items-center" 
-                   id="navbarDropdown" 
-                   href="#" 
-                   role="button" 
-                   data-bs-toggle="dropdown" 
-                   aria-expanded="false">
-                   <!-- Tampilkan Inisial dengan Warna Profil -->
-                   <div class="rounded-circle text-white <?= esc($colorClass ?? 'bg-secondary'); ?> d-flex align-items-center justify-content-center" style="width:30px; height:30px;">
-                       <?= esc($initials ?? 'A'); ?>
-                   </div>
-                   <span class="ms-2 d-none d-lg-inline text-white"><?= esc($adminName ?? 'Admin'); ?></span>
+                <a class="nav-link dropdown-toggle d-flex align-items-center"
+                    id="navbarDropdown"
+                    href="#"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    <!-- Tampilkan Inisial dengan Warna Profil -->
+                    <div class="rounded-circle text-white <?= esc($colorClass ?? 'bg-secondary'); ?> d-flex align-items-center justify-content-center" style="width:30px; height:30px;">
+                        <?= esc($initials ?? 'A'); ?>
+                    </div>
+                    <span class="ms-2 d-none d-lg-inline text-white"><?= esc($adminName ?? 'Admin'); ?></span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                <li><hr class="dropdown-divider" /></li>
+                    <li>
+                        <hr class="dropdown-divider" />
+                    </li>
                     <li><a class="dropdown-item" href="<?= base_url('/admin/logout'); ?>">Logout</a></li>
                 </ul>
             </li>
         </ul>
     </nav>
 
-    <!-- Sidebar & Konten -->
+    <!-- Layout Sidenav -->
     <div id="layoutSidenav">
         <!-- Sidebar -->
         <div id="layoutSidenav_nav">
@@ -62,34 +61,50 @@
                 <div class="sb-sidenav-menu">
                     <div class="nav">
                         <div class="sb-sidenav-menu-heading">Menu Admin</div>
+
+                        <!-- Dashboard -->
                         <a class="nav-link" href="<?= base_url('/admin/dashboard'); ?>">
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                             Dashboard
                         </a>
-                        <a class="nav-link collapsed" href="#" 
-                           data-bs-toggle="collapse" 
-                           data-bs-target="#collapseProduk" 
-                           aria-expanded="false">
+
+                        <!-- Products -->
+                        <a class="nav-link collapsed"
+                            href="#"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapseProduk"
+                            aria-expanded="false">
                             <div class="sb-nav-link-icon"><i class="fas fa-box"></i></div>
                             Produk
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
                         <div class="collapse" id="collapseProduk" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="<?= base_url('/admin/manageProducts'); ?>">Daftar Produk</a>
-                                <a class="nav-link" href="<?= base_url('/admin/manageCategories'); ?>">Kategori Produk</a>
+                                <!-- Product List -->
+                                <a class="nav-link" href="<?= base_url('/admin/manageProducts'); ?>">
+                                    Daftar Produk
+                                </a>
+                                <!-- Product Categories -->
+                                <a class="nav-link" href="<?= base_url('/admin/manageCategories'); ?>">
+                                    Kategori Produk
+                                </a>
+                                <!-- detail produk -->
+                                <a class="nav-link" href="<?= base_url('admin/productDetails'); ?>">
+                                    Detail Produk
+                                </a>
                             </nav>
                         </div>
-
-                        <a class="nav-link" href="<?= base_url('/admin/manage_layout'); ?>">
-                            <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
-                            Tampilan Depan
+                        <!-- pesanan -->
+                        <a class="nav-link" href="<?= base_url('/admin/orders'); ?>">
+                            <div class="sb-nav-link-icon"><i class="fas fa-shopping-bag"></i></div>
+                            Pesanan Masuk
                         </a>
                     </div>
                 </div>
+                <!-- Sidebar Footer -->
                 <div class="sb-sidenav-footer">
                     <div class="small">Logged in as:</div>
-                    <?= esc($adminName ?? 'Admin'); ?>
+                    <?= esc($adminName); ?>
                 </div>
             </nav>
         </div>
@@ -114,13 +129,13 @@
                     <?php $errorData = session()->getFlashdata('error'); ?>
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <?php
-                            if (is_array($errorData)) {
-                                foreach ($errorData as $err) {
-                                    echo "<div>- " . esc($err) . "</div>";
-                                }
-                            } else {
-                                echo esc($errorData);
+                        if (is_array($errorData)) {
+                            foreach ($errorData as $err) {
+                                echo "<div>- " . esc($err) . "</div>";
                             }
+                        } else {
+                            echo esc($errorData);
+                        }
                         ?>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
@@ -171,16 +186,16 @@
                                             <td><?= esc(date('d/m/Y', strtotime($product['created_at']))) ?></td>
                                             <td>
                                                 <!-- Tombol Edit -->
-                                                <button 
-                                                    class="btn btn-success btn-sm edit-btn" 
+                                                <button
+                                                    class="btn btn-success btn-sm edit-btn"
                                                     data-product='<?= json_encode($product) ?>'
-                                                    data-bs-toggle="modal" 
+                                                    data-bs-toggle="modal"
                                                     data-bs-target="#editProductModal">
                                                     <i class="fas fa-edit me-1"></i> Ubah
                                                 </button>
                                                 <!-- Tombol Hapus -->
-                                                <button 
-                                                    class="btn btn-danger btn-sm delete-btn" 
+                                                <button
+                                                    class="btn btn-danger btn-sm delete-btn"
                                                     data-id="<?= esc($product['id_produk']) ?>">
                                                     <i class="fas fa-trash me-1"></i> Hapus
                                                 </button>
@@ -351,7 +366,7 @@
                                                 <?= esc(session('errors')['gambar']) ?>
                                             </div>
                                         <?php endif; ?>
-                                        <img id="editImagePreview" src="#" alt="Preview Gambar" class="modal-img-preview" style="display: none;">
+                                        <img id="editImagePreview" src="#" alt="Preview Gambar" style="display: none; max-width: 100%; height: auto; max-height: 200px; border: 1px solid #ddd; margin-top: 10px;">
                                     </div>
                                     <div class="col-md-12">
                                         <label for="edit_deskripsi" class="form-label">Deskripsi Produk</label>
@@ -380,7 +395,7 @@
                     <div class="d-flex align-items-center justify-content-between small">
                         <div class="text-muted">&copy; Genatan Kaos <?= date('Y'); ?></div>
                         <div>
-                            <a href="#">Privacy Policy</a> &middot; 
+                            <a href="#">Privacy Policy</a> &middot;
                             <a href="#">Terms &amp; Conditions</a>
                         </div>
                     </div>
@@ -402,7 +417,7 @@
 
         // Menangani Klik Tombol Edit
         const editProductModal = document.getElementById('editProductModal');
-        editProductModal.addEventListener('show.bs.modal', function (event) {
+        editProductModal.addEventListener('show.bs.modal', function(event) {
             const button = event.relatedTarget;
             const product = JSON.parse(button.getAttribute('data-product'));
 
@@ -435,7 +450,7 @@
 
         // Menangani Klik Tombol Hapus
         document.querySelectorAll('.delete-btn').forEach(button => {
-            button.addEventListener('click', function () {
+            button.addEventListener('click', function() {
                 const id = this.getAttribute('data-id');
                 if (confirm('Anda yakin ingin menghapus produk ini?')) {
                     window.location.href = "<?= base_url('admin/products/delete/') ?>" + id;
@@ -444,7 +459,7 @@
         });
 
         // Preview Gambar untuk Tambah Produk
-        document.getElementById('gambar').addEventListener('change', function(){
+        document.getElementById('gambar').addEventListener('change', function() {
             const [file] = this.files;
             if (file) {
                 const preview = document.getElementById('addImagePreview');
@@ -458,7 +473,7 @@
         });
 
         // Preview Gambar untuk Edit Produk
-        document.getElementById('edit_gambar').addEventListener('change', function(){
+        document.getElementById('edit_gambar').addEventListener('change', function() {
             const [file] = this.files;
             if (file) {
                 const preview = document.getElementById('editImagePreview');
@@ -472,4 +487,5 @@
         });
     </script>
 </body>
+
 </html>
